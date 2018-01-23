@@ -1,0 +1,123 @@
+.mask, .mask1_bg { width: 0; height: 100%; position: fixed; right: 0; top: 0; -webkit-transition: all 0.3s ease-in-out 0s; -moz-transition: all 0.3s ease-in-out 0s; -ms-transition: all 0.3s ease-in-out 0s; -o-transition: all 0.3s ease-in-out 0s; transition: all 0.3s ease-in-out 0s; background: rgba(0, 0, 0, 0.6); z-index: 5; }
+
+.mask { display: none; }
+
+.mask2, .mask3 { width: 100%; height: 100%; position: fixed; left: 0; top: 0; background: rgba(0, 0, 0, 0.6); z-index: 5; display: none; }
+
+.mask_cut { width: 100%; }
+
+.mask1_bg { width: 100%; height: 0; position: fixed; right: 0; top: 0; -webkit-transition: all 0.3s ease-in-out 0s; -moz-transition: all 0.3s ease-in-out 0s; -ms-transition: all 0.3s ease-in-out 0s; -o-transition: all 0.3s ease-in-out 0s; transition: all 0.3s ease-in-out 0s; background: rgba(0, 0, 0, 0.6); z-index: 5; }
+
+.mask1_bg_cut { height: 100%; }
+
+.detail_cont { line-height: 25px; }
+
+.detail_cont p, .detail_title { margin-bottom: 30px; text-indent: 2em; color: #666666; }
+
+.detail_cont img { margin-bottom: 30px; width: 100%; }
+
+.detail_zan { border-top: 1px solid #d5d5d5; text-align: center; padding: 30px 0; }
+
+.detail_btn, .pay_go, .pay_go_back a { background: #eb6e5a; color: #fff; width: 100px; line-height: 35px; margin: 20px auto 0; border-radius: 5px; cursor: pointer; text-align: center; }
+
+.detail_alert { width: 100%; max-width: 650px; background: #fff; position: fixed; top: -800px; left: 50%; border: 1px solid #d5d5d5; margin-left: -325px; z-index: 10; border-radius: 10px; -moz-box-shadow: 0 0 5px #d5d5d5; box-shadow: 0 0 5px #d5d5d5; padding: 50px 30px 0; box-sizing: border-box; -webkit-transition: all 0.3s ease-in-out 0s; -moz-transition: all 0.3s ease-in-out 0s; -ms-transition: all 0.3s ease-in-out 0s; -o-transition: all 0.3s ease-in-out 0s; transition: all 0.3s ease-in-out 0s; }
+
+.detail_alert_cut { top: 200px; }
+
+.pay_list li { padding-bottom: 20px; margin-top: 20px; width: 148px; height: 36px; border: 2px solid #a5a5a5; float: left; margin-right: 15px; border-radius: 12px; overflow: hidden; position: relative; cursor: pointer; }
+
+.pay_list li.pay_cut { border: 2px solid #e74c4c; }
+
+.pay_list li b { background: url(../images/pay_cut.png) no-repeat; width: 37px; height: 37px; position: absolute; right: 0; bottom: 0; display: none; }
+
+.pay_list li.pay_cut b { display: block; }
+
+.pay_list li.channel_alipay { background-image: url(../images/channel_alipay.gif); }
+
+.pay_list li.channel_weixin { background-image: url(../images/channel_weixin.gif); }
+
+.pay_list li.channel_jdpay { background-image: url(../images/channel_jdpay.gif); }
+
+.close, .close_alert { width: 22px; height: 22px; position: absolute; right: 0; top: 0; padding: 15px; background: url(../images/close.png) no-repeat center center; cursor: pointer; }
+
+.alert_input { border: 1px solid #d5d5d5; background: #f5f5f5; font-size: 20px; margin-bottom: 5px; padding: 15px; color: #797979; border-radius: 12px 12px 0 0; }
+
+.alert_input input { font-size: 24px; background: none; color: #333333;     border: 0;
+  padding: 0 5px;
+  line-height: 22px;     outline: none;}
+
+.alert_textarea { border: 1px solid #d5d5d5; background: #f5f5f5; font-size: 20px; border-radius: 0 0 12px 12px; padding: 10px 10px; }
+
+.alert_textarea textarea {    color: #333333; outline: none;border: 0; width: 100%; height: 100%; box-sizing: border-box; font-size: 20px; background: none;  }
+
+.pay_list p { margin-top: 20px; padding: 0; font-size: 24px; color: #333; }
+
+.pay_list ul { overflow: hidden; }
+
+.pay_go_back { display: none; }
+
+.pay_go, .pay_go_back a { width: 100%; display: block; font-size: 24px; line-height: 45px; margin: 0 0 60px;text-decoration: none; }
+
+.pay_go:hover, .pay_go_back a:hover { color: #fff !important; opacity: .8; }
+
+.mess_text { line-height: 60px; height: 60px; color: #f35c55; }
+
+.vote_bn { height: 326px; }
+
+.pay_go_back a { float: left; margin: 0 3% 60px; width: 44%; }
+
+
+@media (max-width: 640px) and (min-width: 320px) {
+  .detail_alert {
+    left: 0;
+    margin-left: 0;
+    padding: 50px 20px 0;
+  }
+  .alert_input {
+    padding: 10px;
+  }
+  .pay_list li {
+    margin-right: 5px;
+    border-radius: 5px;
+    width: 91px;
+    height: 14px;
+    background-position-x: -19px !important;
+  }
+  .pay_list li.channel_weixin {
+    display: none;
+  }
+  .detail_alert_cut {
+    top: 20px;
+  }
+  .pay_go,
+  .pay_go_back a {
+    margin: 0 0 25px;
+    font-size: 18px;
+    line-height: 35px;
+  }
+  .pay_go_back a {
+    margin: 0 3% 25px;
+  }
+  .mess_text {
+    height: 35px;
+    line-height: 35px;
+  }
+  .pay_list li b {
+    width: 20px;
+    height: 20px;
+    background-size: 100% auto;
+  }
+  .alert_textarea {
+    padding: 5px;
+  }
+  .alert_input input {
+    width: 60%;
+  }
+  .pay_list p {
+    padding: 15px 0;
+    font-size: 20px;
+  }
+  .pay_list p {
+    margin-left: 2%;
+  }
+}
