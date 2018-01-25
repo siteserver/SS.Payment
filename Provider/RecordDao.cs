@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Data;
 using SiteServer.Plugin;
-using SiteServer.Plugin.Apis;
 using SS.Payment.Model;
 
 namespace SS.Payment.Provider
@@ -76,12 +75,12 @@ namespace SS.Payment.Provider
         };
 
         private readonly string _connectionString;
-        private readonly IDataApi _helper;
+        private readonly IDataApi _dataApi;
 
-        public RecordDao(IContext context)
+        public RecordDao(string connectionString, IDataApi dataApi)
         {
-            _connectionString = context.Environment.ConnectionString;
-            _helper = context.DataApi;
+            _connectionString = connectionString;
+            _dataApi = dataApi;
         }
 
         public int Insert(RecordInfo recordInfo)
@@ -113,19 +112,19 @@ namespace SS.Payment.Provider
 
             var parameters = new[]
             {
-                _helper.GetParameter(nameof(recordInfo.PublishmentSystemId), recordInfo.PublishmentSystemId),
-                _helper.GetParameter(nameof(recordInfo.Message), recordInfo.Message),
-                _helper.GetParameter(nameof(recordInfo.ProductId), recordInfo.ProductId),
-                _helper.GetParameter(nameof(recordInfo.ProductName), recordInfo.ProductName),
-                _helper.GetParameter(nameof(recordInfo.Fee), recordInfo.Fee),
-                _helper.GetParameter(nameof(recordInfo.OrderNo), recordInfo.OrderNo),
-                _helper.GetParameter(nameof(recordInfo.Channel), recordInfo.Channel),
-                _helper.GetParameter(nameof(recordInfo.IsPaied), recordInfo.IsPaied),
-                _helper.GetParameter(nameof(recordInfo.UserName), recordInfo.UserName),
-                _helper.GetParameter(nameof(recordInfo.AddDate), recordInfo.AddDate)
+                _dataApi.GetParameter(nameof(recordInfo.PublishmentSystemId), recordInfo.PublishmentSystemId),
+                _dataApi.GetParameter(nameof(recordInfo.Message), recordInfo.Message),
+                _dataApi.GetParameter(nameof(recordInfo.ProductId), recordInfo.ProductId),
+                _dataApi.GetParameter(nameof(recordInfo.ProductName), recordInfo.ProductName),
+                _dataApi.GetParameter(nameof(recordInfo.Fee), recordInfo.Fee),
+                _dataApi.GetParameter(nameof(recordInfo.OrderNo), recordInfo.OrderNo),
+                _dataApi.GetParameter(nameof(recordInfo.Channel), recordInfo.Channel),
+                _dataApi.GetParameter(nameof(recordInfo.IsPaied), recordInfo.IsPaied),
+                _dataApi.GetParameter(nameof(recordInfo.UserName), recordInfo.UserName),
+                _dataApi.GetParameter(nameof(recordInfo.AddDate), recordInfo.AddDate)
             };
 
-            return _helper.ExecuteNonQueryAndReturnId(TableName, nameof(RecordInfo.Id), _connectionString, sqlString, parameters);
+            return _dataApi.ExecuteNonQueryAndReturnId(TableName, nameof(RecordInfo.Id), _connectionString, sqlString, parameters);
         }
 
         public void UpdateIsPaied(string orderNo)
@@ -136,11 +135,11 @@ namespace SS.Payment.Provider
 
             var parameters = new List<IDataParameter>
             {
-                _helper.GetParameter(nameof(RecordInfo.IsPaied), true),
-                _helper.GetParameter(nameof(RecordInfo.OrderNo), orderNo)
+                _dataApi.GetParameter(nameof(RecordInfo.IsPaied), true),
+                _dataApi.GetParameter(nameof(RecordInfo.OrderNo), orderNo)
             };
 
-            _helper.ExecuteNonQuery(_connectionString, sqlString, parameters.ToArray());
+            _dataApi.ExecuteNonQuery(_connectionString, sqlString, parameters.ToArray());
         }
 
         public bool IsPaied(string orderNo)
@@ -151,10 +150,10 @@ namespace SS.Payment.Provider
 
             var parameters = new List<IDataParameter>
             {
-                _helper.GetParameter(nameof(RecordInfo.OrderNo), orderNo)
+                _dataApi.GetParameter(nameof(RecordInfo.OrderNo), orderNo)
             };
 
-            using (var rdr = _helper.ExecuteReader(_connectionString, sqlString, parameters.ToArray()))
+            using (var rdr = _dataApi.ExecuteReader(_connectionString, sqlString, parameters.ToArray()))
             {
                 if (rdr.Read() && !rdr.IsDBNull(0))
                 {
@@ -186,7 +185,7 @@ namespace SS.Payment.Provider
         {
             string sqlString =
                 $"DELETE FROM {TableName} WHERE Id IN ({string.Join(",", deleteIdList)})";
-            _helper.ExecuteNonQuery(_connectionString, sqlString);
+            _dataApi.ExecuteNonQuery(_connectionString, sqlString);
         }
     }
 }

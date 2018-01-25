@@ -21,14 +21,14 @@ namespace SS.Payment.Pages
 
         public static string GetRedirectUrl(int publishmentSystemId)
         {
-            return Main.Context.FilesApi.GetPluginUrl($"{nameof(PageRecords)}.aspx?publishmentSystemId={publishmentSystemId}");
+            return Main.FilesApi.GetPluginUrl($"{nameof(PageRecords)}.aspx?publishmentSystemId={publishmentSystemId}");
         }
 
 		public void Page_Load(object sender, EventArgs e)
         {
             _publishmentSystemId = Convert.ToInt32(Request.QueryString["publishmentSystemId"]);
 
-            if (!Main.Context.AdminApi.IsSiteAuthorized(_publishmentSystemId))
+            if (!Main.AdminApi.IsSiteAuthorized(_publishmentSystemId))
             {
                 Response.Write("<h1>未授权访问</h1>");
                 Response.End();

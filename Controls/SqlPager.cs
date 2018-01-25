@@ -6,6 +6,7 @@ using System.Data;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SiteServer.Plugin;
 using SS.Payment.Core;
 
 namespace SS.Payment.Controls
@@ -38,7 +39,7 @@ namespace SS.Payment.Controls
                 orderByString2 = orderByString2.Replace(" ASC", " DESC");
                 orderByString2 = orderByString2.Replace(" DESC2", " ASC");
 
-                if (Utils.EqualsIgnoreCase(Main.Context.DataApi.DatabaseType, "MySql"))
+                if (Main.DatabaseType == DatabaseType.MySql)
                 {
                     return $@"
 SELECT * FROM (
@@ -59,7 +60,7 @@ SELECT * FROM
             }
             else
             {
-                if (Utils.EqualsIgnoreCase(Main.Context.DataApi.DatabaseType, "MySql"))
+                if (Main.DatabaseType == DatabaseType.MySql)
                 {
                     return $@"
 SELECT * FROM (
@@ -630,7 +631,7 @@ ORDER BY {SortField} {SortMode}";
                 return;
             }
 
-            var dataset = Main.DbHelper.ExecuteDataset(cmd);
+            var dataset = Main.DataApi.ExecuteDataset(cmd);
             var data = dataset.Tables[0];
 
             // Configures the paged data source component
@@ -700,8 +701,8 @@ ORDER BY {SortField} {SortMode}";
 
             var cmdText = GetQueryPageCommandText(recsToRetrieve);
 
-            var conn = Main.DbHelper.GetConnection(Main.Context.DataApi.ConnectionString);
-            var cmd = Main.DbHelper.GetCommand();
+            var conn = Main.DataApi.GetConnection(Main.ConnectionString);
+            var cmd = Main.DataApi.GetCommand();
             cmd.Connection = conn;
             cmd.CommandText = cmdText;
             return cmd;

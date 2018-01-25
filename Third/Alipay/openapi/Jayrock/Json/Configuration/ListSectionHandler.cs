@@ -70,14 +70,13 @@ namespace Jayrock.Configuration
 
                 if (childNode.NodeType != XmlNodeType.Element)
                 {
-                    throw new ConfigurationErrorsException(string.Format("Unexpected type of node ({0}) in configuration.", 
-                        childNode.NodeType.ToString()), childNode);
+                    throw new Exception($"Unexpected type of node ({childNode.NodeType}) in configuration.");
                 }
 
                 if (childNode.Name != itemName)
                 {
-                    throw new ConfigurationErrorsException(string.Format("Element <{0}> is not valid here in configuration. Use <{1}> elements only.", 
-                        childNode.Name, itemName), childNode);
+                    throw new Exception(
+                        $"Element <{childNode.Name}> is not valid here in configuration. Use <{itemName}> elements only.");
                 }
 
                 list.Add(GetItem((XmlElement) childNode));

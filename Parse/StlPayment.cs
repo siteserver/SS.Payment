@@ -31,7 +31,7 @@ namespace SS.Payment.Parse
         {
             var publishmentSystemId = context.GetPostInt("publishmentSystemId");
 
-            var configInfo = Main.Context.ConfigApi.GetConfig<ConfigInfo>(publishmentSystemId);
+            var configInfo = Main.ConfigApi.GetConfig<ConfigInfo>(publishmentSystemId);
 
             return new
             {
@@ -76,10 +76,10 @@ namespace SS.Payment.Parse
             }
             if (channel == "weixin")
             {
-                var notifyUrl = Main.Context.FilesApi.GetApiPluginHttpUrl(nameof(ApiWeixinNotify), orderNo);
+                var notifyUrl = Main.FilesApi.GetApiHttpUrl(nameof(ApiWeixinNotify), orderNo);
                 var url = HttpUtility.UrlEncode(PaymentApi.Instance.ChargeByWeixin(productName, fee, orderNo, notifyUrl));
                 var qrCodeUrl =
-                    $"{Main.Context.FilesApi.GetApiPluginHttpUrl(nameof(ApiQrCode))}?qrcode={url}";
+                    $"{Main.FilesApi.GetApiHttpUrl(nameof(ApiQrCode))}?qrcode={url}";
                 return new
                 {
                     qrCodeUrl,
@@ -177,28 +177,28 @@ namespace SS.Payment.Parse
                 var value = context.Attributes[name];
                 if (Utils.EqualsIgnoreCase(name, AttributeProductId))
                 {
-                    productId = Main.Context.ParseApi.ParseAttributeValue(value, context);
+                    productId = Main.ParseApi.ParseAttributeValue(value, context);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeProductName))
                 {
-                    productName = Main.Context.ParseApi.ParseAttributeValue(value, context);
+                    productName = Main.ParseApi.ParseAttributeValue(value, context);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeFee))
                 {
-                    value = Main.Context.ParseApi.ParseAttributeValue(value, context);
+                    value = Main.ParseApi.ParseAttributeValue(value, context);
                     decimal.TryParse(value, out fee);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeLoginUrl))
                 {
-                    loginUrl = Main.Context.ParseApi.ParseAttributeValue(value, context);
+                    loginUrl = Main.ParseApi.ParseAttributeValue(value, context);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeRedirectUrl))
                 {
-                    redirectUrl = Main.Context.ParseApi.ParseAttributeValue(value, context);
+                    redirectUrl = Main.ParseApi.ParseAttributeValue(value, context);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeWeixinName))
                 {
-                    weixinName = Main.Context.ParseApi.ParseAttributeValue(value, context);
+                    weixinName = Main.ParseApi.ParseAttributeValue(value, context);
                 }
                 else
                 {
@@ -209,7 +209,7 @@ namespace SS.Payment.Parse
             {
                 loginUrl = "/home/#/login";
             }
-            var currentUrl = Main.Context.ParseApi.GetCurrentUrl(context);
+            var currentUrl = Main.ParseApi.GetCurrentUrl(context);
             var loginToPaymentUrl = $"{loginUrl}?redirectUrl={HttpUtility.UrlEncode(currentUrl)}";
 
             if (string.IsNullOrEmpty(productName) || fee <= 0) return string.Empty;
@@ -260,15 +260,15 @@ namespace SS.Payment.Parse
 
             var elementId = "el-" + Guid.NewGuid();
             var vueId = "v" + Guid.NewGuid().ToString().Replace("-", string.Empty);
-            var styleUrl = Main.Context.FilesApi.GetApiPluginUrl("assets/css/style.css");
-            var jqueryUrl = Main.Context.FilesApi.GetApiPluginUrl("assets/js/jquery.min.js");
-            var vueUrl = Main.Context.FilesApi.GetApiPluginUrl("assets/js/vue.min.js");
-            var deviceUrl = Main.Context.FilesApi.GetApiPluginUrl("assets/js/device.min.js");
-            var apiPayUrl = Main.Context.FilesApi.GetApiPluginJsonUrl(nameof(ApiPay));
-            var apiPaySuccessUrl = Main.Context.FilesApi.GetApiPluginJsonUrl(nameof(ApiPaySuccess));
-            var successUrl = Main.Context.ParseApi.GetCurrentUrl(context) + "?isPaymentSuccess=" + true;
-            var apiWeixinIntervalUrl = Main.Context.FilesApi.GetApiPluginJsonUrl(nameof(ApiWeixinInterval));
-            var apiGetUrl = Main.Context.FilesApi.GetApiPluginJsonUrl(nameof(ApiGet));
+            var styleUrl = Main.FilesApi.GetPluginUrl("assets/css/style.css");
+            var jqueryUrl = Main.FilesApi.GetPluginUrl("assets/js/jquery.min.js");
+            var vueUrl = Main.FilesApi.GetPluginUrl("assets/js/vue.min.js");
+            var deviceUrl = Main.FilesApi.GetPluginUrl("assets/js/device.min.js");
+            var apiPayUrl = Main.FilesApi.GetApiJsonUrl(nameof(ApiPay));
+            var apiPaySuccessUrl = Main.FilesApi.GetApiJsonUrl(nameof(ApiPaySuccess));
+            var successUrl = Main.ParseApi.GetCurrentUrl(context) + "?isPaymentSuccess=" + true;
+            var apiWeixinIntervalUrl = Main.FilesApi.GetApiJsonUrl(nameof(ApiWeixinInterval));
+            var apiGetUrl = Main.FilesApi.GetApiJsonUrl(nameof(ApiGet));
 
             var html = $@"
 <link rel=""stylesheet"" type=""text/css"" href=""{styleUrl}"" />
@@ -426,7 +426,7 @@ namespace SS.Payment.Parse
 </script>
 ";
 
-            stlAnchor.InnerHtml = Main.Context.ParseApi.ParseInnerXml(context.InnerXml, context);
+            stlAnchor.InnerHtml = Main.ParseApi.ParseInnerXml(context.InnerXml, context);
             stlAnchor.HRef = "javascript:;";
             stlAnchor.Attributes["onclick"] = $"{vueId}.open()";
 

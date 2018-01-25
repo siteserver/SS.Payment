@@ -189,13 +189,13 @@ namespace Jayrock.Json.Conversion
                     exporters.Add(new DataTableExporter());
                     exporters.Add(new DataRowExporter());
 
-                    IList typeList = (IList)ConfigurationManager.GetSection("jayrock/json.conversion.exporters");
+                    //IList typeList = (IList)ConfigurationManager.GetSection("jayrock/json.conversion.exporters");
 
-                    if (typeList != null && typeList.Count > 0)
-                    {
-                        foreach (Type type in typeList)
-                            exporters.Add((IExporter) Activator.CreateInstance(type));
-                    }
+                    //if (typeList != null && typeList.Count > 0)
+                    //{
+                    //    foreach (Type type in typeList)
+                    //        exporters.Add((IExporter) Activator.CreateInstance(type));
+                    //}
 
                     _stockExporters = exporters;
                 }

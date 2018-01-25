@@ -468,7 +468,7 @@ namespace SS.Payment.Core
                 }
                 else
                 {
-                    xmlDocument.LoadXml(XmlDeclaration + XmlNamespaceStart + Main.Context.ParseApi.HtmlToXml(element) + XmlNamespaceEnd);
+                    xmlDocument.LoadXml(XmlDeclaration + XmlNamespaceStart + Main.ParseApi.HtmlToXml(element) + XmlNamespaceEnd);
                 }
             }
             catch

@@ -172,13 +172,13 @@ namespace Jayrock.Json.Conversion
                     importers.Add(new DictionaryImporter());
                     importers.Add(new ListImporter());
                     
-                    IList typeList = (IList) ConfigurationManager.GetSection("jayrock/json.conversion.importers");
+                    //IList typeList = (IList) ConfigurationManager.GetSection("jayrock/json.conversion.importers");
 
-                    if (typeList != null && typeList.Count > 0)
-                    {
-                        foreach (Type type in typeList)
-                            importers.Add((IImporter) Activator.CreateInstance(type));
-                    }
+                    //if (typeList != null && typeList.Count > 0)
+                    //{
+                    //    foreach (Type type in typeList)
+                    //        importers.Add((IImporter) Activator.CreateInstance(type));
+                    //}
 
                     _stockImporters = importers;
                 }

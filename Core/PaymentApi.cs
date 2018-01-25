@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using Aop.Api;
 using Aop.Api.Domain;
@@ -23,7 +21,7 @@ namespace SS.Payment.Core
 
         private static ConfigInfo GetConfig()
         {
-            return Main.Context.ConfigApi.GetConfig<ConfigInfo>(0) ?? new ConfigInfo();
+            return Main.ConfigApi.GetConfig<ConfigInfo>(0) ?? new ConfigInfo();
         }
 
         public bool IsAlipayPc
@@ -415,7 +413,8 @@ namespace SS.Payment.Core
             var config = GetConfig();
             if (!config.IsJdpay) return null;
 
-            var callbackUrl = Utils.AddProtocolToUrl(Pay.GetUrl(PageUtility.OuterApiUrl, returnUrl));
+            //var callbackUrl = Utils.AddProtocolToUrl(Pay.GetUrl(PageUtility.OuterApiUrl, returnUrl));
+            var callbackUrl = string.Empty;
 
             var orderInfoDic = new SortedDictionary<string, string>
             {

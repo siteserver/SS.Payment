@@ -58,7 +58,7 @@ namespace Jayrock.Configuration
             
             if (typeName.Length == 0)
             {
-                throw new ConfigurationErrorsException(string.Format("Missing type name specification on <{0}> element.", ElementName), element);
+                throw new Exception($"Missing type name specification on <{ElementName}> element.");
             }
 
             Type type = GetType(typeName);
@@ -78,7 +78,7 @@ namespace Jayrock.Configuration
                 return;
             
             if (!ExpectedType.IsAssignableFrom(type))
-                throw new ConfigurationErrorsException(string.Format("The type {0} is not valid for the <{2}> configuration element. It must be compatible with the type {1}.", type.FullName, ExpectedType.FullName, element.Name), element);
+                throw new Exception(string.Format("The type {0} is not valid for the <{2}> configuration element. It must be compatible with the type {1}.", type.FullName, ExpectedType.FullName, element.Name));
         }
 
         protected virtual Type GetType(string typeName) 

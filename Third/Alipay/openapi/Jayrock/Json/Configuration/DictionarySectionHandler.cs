@@ -53,8 +53,7 @@ namespace Jayrock.Configuration
 
                 if (childNode.NodeType != XmlNodeType.Element)
                 {
-                    throw new ConfigurationErrorsException(string.Format("Unexpected type of node ({0}) in configuration.",
-                        childNode.NodeType.ToString()), childNode);
+                    throw new Exception($"Unexpected type of node ({childNode.NodeType}) in configuration.");
                 }
 
                 string nodeName = childNode.Name;
@@ -69,7 +68,7 @@ namespace Jayrock.Configuration
                     string key = keyAttribute == null ? null : keyAttribute.Value;
 
                     if (key == null || key.Length == 0)
-                        throw new ConfigurationErrorsException("Missing entry key.", childNode);
+                        throw new Exception("Missing entry key.");
 
                     if (nodeName == "add")
                     {
@@ -81,7 +80,7 @@ namespace Jayrock.Configuration
                     }
                     else
                     {
-                        throw new ConfigurationErrorsException(string.Format("'{0}' is not a valid dictionary node. Use add, remove or clear.", nodeName), childNode);
+                        throw new Exception($"'{nodeName}' is not a valid dictionary node. Use add, remove or clear.");
                     }
                 }
             }
