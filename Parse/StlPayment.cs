@@ -32,29 +32,29 @@ namespace SS.Payment.Parse
             Utils.Redirect(successUrl);
         }
 
-        public static object ApiGet(IRequestContext context)
+        public static object ApiGet(IRequest request)
         {
-            var siteId = context.GetPostInt("siteId");
+            var siteId = request.GetPostInt("siteId");
 
             var configInfo = Plugin.ConfigApi.GetConfig<ConfigInfo>(siteId);
 
             return new
             {
-                context.IsUserLoggin,
+                request.IsUserLoggin,
                 IsForceLogin = configInfo != null && configInfo.IsForceLogin
             };
         }
 
-        public static object ApiPay(IRequestContext context)
+        public static object ApiPay(IRequest request)
         {
-            var siteId = context.GetPostInt("siteId");
-            var productId = context.GetPostString("productId");
-            var productName = context.GetPostString("productName");
-            var fee = context.GetPostDecimal("fee");
-            var channel = context.GetPostString("channel");
-            var message = context.GetPostString("message");
-            var isMobile = context.GetPostBool("isMobile");
-            var successUrl = context.GetPostString("successUrl");
+            var siteId = request.GetPostInt("siteId");
+            var productId = request.GetPostString("productId");
+            var productName = request.GetPostString("productName");
+            var fee = request.GetPostDecimal("fee");
+            var channel = request.GetPostString("channel");
+            var message = request.GetPostString("message");
+            var isMobile = request.GetPostBool("isMobile");
+            var successUrl = request.GetPostString("successUrl");
             var orderNo = Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", "");
             successUrl += "&orderNo=" + orderNo;
 
@@ -70,7 +70,7 @@ namespace SS.Payment.Parse
                 OrderNo = orderNo,
                 Channel = channel,
                 IsPaied = false,
-                UserName = context.UserName,
+                UserName = request.UserName,
                 AddDate = DateTime.Now
             };
             Plugin.RecordDao.Insert(recordInfo);
@@ -101,11 +101,11 @@ namespace SS.Payment.Parse
             return null;
         }
 
-        public static HttpResponseMessage ApiQrCode(IRequestContext context)
+        public static HttpResponseMessage ApiQrCode(IRequest request)
         {
             var response = new HttpResponseMessage();
 
-            var qrcode = context.GetQueryString("qrcode");
+            var qrcode = request.GetQueryString("qrcode");
             var qrCodeEncoder = new QRCodeEncoder
             {
                 QRCodeEncodeMode = QRCodeEncoder.ENCODE_MODE.BYTE,
@@ -128,9 +128,9 @@ namespace SS.Payment.Parse
             return response;
         }
 
-        public static HttpResponseMessage ApiWeixinNotify(IRequestContext context, string orderNo)
+        public static HttpResponseMessage ApiWeixinNotify(IRequest request, string orderNo)
         {
-            var siteId = context.GetPostInt("siteId");
+            var siteId = request.GetPostInt("siteId");
 
             var response = new HttpResponseMessage();
 
@@ -138,7 +138,7 @@ namespace SS.Payment.Parse
 
             bool isPaied;
             string responseXml;
-            paymentApi.NotifyByWeixin(context.Request, out isPaied, out responseXml);
+            paymentApi.NotifyByWeixin(request.HttpRequest, out isPaied, out responseXml);
             if (isPaied)
             {
                 Plugin.RecordDao.UpdateIsPaied(orderNo);
@@ -151,18 +151,18 @@ namespace SS.Payment.Parse
             return response;
         }
 
-        public static object ApiPaySuccess(IRequestContext context)
+        public static object ApiPaySuccess(IRequest request)
         {
-            var orderNo = context.GetPostString("orderNo");
+            var orderNo = request.GetPostString("orderNo");
             
             Plugin.RecordDao.UpdateIsPaied(orderNo);
 
             return null;
         }
 
-        public static object ApiWeixinInterval(IRequestContext context)
+        public static object ApiWeixinInterval(IRequest request)
         {
-            var orderNo = context.GetPostString("orderNo");
+            var orderNo = request.GetPostString("orderNo");
 
             var isPaied = Plugin.RecordDao.IsPaied(orderNo);
 
