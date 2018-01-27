@@ -84,6 +84,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Parse\StlPayment.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Provider\RecordDao.cs" />
     <Compile Include="Provider\Dao.cs" />
     <Compile Include="Third\Alipay\MApi\Mobi\AlipayConfig.cs" />
@@ -4377,7 +4378,6 @@
     <None Include="SS.Payment.nuspec" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
     <Folder Include="Third\Alipay\openapi\Properties\" />
   </ItemGroup>
   <ItemGroup>
