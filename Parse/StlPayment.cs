@@ -27,11 +27,16 @@ namespace SS.Payment.Parse
         public const string AttributeRedirectUrl = "redirectUrl";
         public const string AttributeWeixinName = "weixinName";
 
+        public static void ApiRedirect(string successUrl)
+        {
+            Utils.Redirect(successUrl);
+        }
+
         public static object ApiGet(IRequestContext context)
         {
-            var publishmentSystemId = context.GetPostInt("publishmentSystemId");
+            var siteId = context.GetPostInt("siteId");
 
-            var configInfo = Main.ConfigApi.GetConfig<ConfigInfo>(publishmentSystemId);
+            var configInfo = Plugin.ConfigApi.GetConfig<ConfigInfo>(siteId);
 
             return new
             {
@@ -42,7 +47,7 @@ namespace SS.Payment.Parse
 
         public static object ApiPay(IRequestContext context)
         {
-            var publishmentSystemId = context.GetPostInt("publishmentSystemId");
+            var siteId = context.GetPostInt("siteId");
             var productId = context.GetPostString("productId");
             var productName = context.GetPostString("productName");
             var fee = context.GetPostDecimal("fee");
@@ -53,9 +58,11 @@ namespace SS.Payment.Parse
             var orderNo = Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", "");
             successUrl += "&orderNo=" + orderNo;
 
+            var paymentApi = new PaymentApi(siteId);
+
             var recordInfo = new RecordInfo
             {
-                PublishmentSystemId = publishmentSystemId,
+                PublishmentSystemId = siteId,
                 Message = message,
                 ProductId = productId,
                 ProductName = productName,
@@ -66,20 +73,20 @@ namespace SS.Payment.Parse
                 UserName = context.UserName,
                 AddDate = DateTime.Now
             };
-            Main.RecordDao.Insert(recordInfo);
+            Plugin.RecordDao.Insert(recordInfo);
 
             if (channel == "alipay")
             {
                 return isMobile
-                    ? PaymentApi.Instance.ChargeByAlipayMobi(productName, fee, orderNo, successUrl)
-                    : PaymentApi.Instance.ChargeByAlipayPc(productName, fee, orderNo, successUrl);
+                    ? paymentApi.ChargeByAlipayMobi(productName, fee, orderNo, successUrl)
+                    : paymentApi.ChargeByAlipayPc(productName, fee, orderNo, successUrl);
             }
             if (channel == "weixin")
             {
-                var notifyUrl = Main.FilesApi.GetApiHttpUrl(nameof(ApiWeixinNotify), orderNo);
-                var url = HttpUtility.UrlEncode(PaymentApi.Instance.ChargeByWeixin(productName, fee, orderNo, notifyUrl));
+                var notifyUrl = Plugin.FilesApi.GetApiHttpUrl(nameof(ApiWeixinNotify), orderNo);
+                var url = HttpUtility.UrlEncode(paymentApi.ChargeByWeixin(productName, fee, orderNo, notifyUrl));
                 var qrCodeUrl =
-                    $"{Main.FilesApi.GetApiHttpUrl(nameof(ApiQrCode))}?qrcode={url}";
+                    $"{Plugin.FilesApi.GetApiHttpUrl(nameof(ApiQrCode))}?qrcode={url}";
                 return new
                 {
                     qrCodeUrl,
@@ -88,7 +95,7 @@ namespace SS.Payment.Parse
             }
             if (channel == "jdpay")
             {
-                return PaymentApi.Instance.ChargeByJdpay(productName, fee, orderNo, successUrl);
+                return paymentApi.ChargeByJdpay(productName, fee, orderNo, successUrl);
             }
 
             return null;
@@ -123,14 +130,18 @@ namespace SS.Payment.Parse
 
         public static HttpResponseMessage ApiWeixinNotify(IRequestContext context, string orderNo)
         {
+            var siteId = context.GetPostInt("siteId");
+
             var response = new HttpResponseMessage();
+
+            var paymentApi = new PaymentApi(siteId);
 
             bool isPaied;
             string responseXml;
-            PaymentApi.Instance.NotifyByWeixin(context.Request, out isPaied, out responseXml);
+            paymentApi.NotifyByWeixin(context.Request, out isPaied, out responseXml);
             if (isPaied)
             {
-                Main.RecordDao.UpdateIsPaied(orderNo);
+                Plugin.RecordDao.UpdateIsPaied(orderNo);
             }
 
             response.Content = new StringContent(responseXml);
@@ -144,7 +155,7 @@ namespace SS.Payment.Parse
         {
             var orderNo = context.GetPostString("orderNo");
             
-            Main.RecordDao.UpdateIsPaied(orderNo);
+            Plugin.RecordDao.UpdateIsPaied(orderNo);
 
             return null;
         }
@@ -153,7 +164,7 @@ namespace SS.Payment.Parse
         {
             var orderNo = context.GetPostString("orderNo");
 
-            var isPaied = Main.RecordDao.IsPaied(orderNo);
+            var isPaied = Plugin.RecordDao.IsPaied(orderNo);
 
             return new
             {
@@ -177,28 +188,28 @@ namespace SS.Payment.Parse
                 var value = context.Attributes[name];
                 if (Utils.EqualsIgnoreCase(name, AttributeProductId))
                 {
-                    productId = Main.ParseApi.ParseAttributeValue(value, context);
+                    productId = Plugin.ParseApi.ParseAttributeValue(value, context);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeProductName))
                 {
-                    productName = Main.ParseApi.ParseAttributeValue(value, context);
+                    productName = Plugin.ParseApi.ParseAttributeValue(value, context);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeFee))
                 {
-                    value = Main.ParseApi.ParseAttributeValue(value, context);
+                    value = Plugin.ParseApi.ParseAttributeValue(value, context);
                     decimal.TryParse(value, out fee);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeLoginUrl))
                 {
-                    loginUrl = Main.ParseApi.ParseAttributeValue(value, context);
+                    loginUrl = Plugin.ParseApi.ParseAttributeValue(value, context);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeRedirectUrl))
                 {
-                    redirectUrl = Main.ParseApi.ParseAttributeValue(value, context);
+                    redirectUrl = Plugin.ParseApi.ParseAttributeValue(value, context);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeWeixinName))
                 {
-                    weixinName = Main.ParseApi.ParseAttributeValue(value, context);
+                    weixinName = Plugin.ParseApi.ParseAttributeValue(value, context);
                 }
                 else
                 {
@@ -209,7 +220,7 @@ namespace SS.Payment.Parse
             {
                 loginUrl = "/home/#/login";
             }
-            var currentUrl = Main.ParseApi.GetCurrentUrl(context);
+            var currentUrl = Plugin.ParseApi.GetCurrentUrl(context);
             var loginToPaymentUrl = $"{loginUrl}?redirectUrl={HttpUtility.UrlEncode(currentUrl)}";
 
             if (string.IsNullOrEmpty(productName) || fee <= 0) return string.Empty;
@@ -260,15 +271,17 @@ namespace SS.Payment.Parse
 
             var elementId = "el-" + Guid.NewGuid();
             var vueId = "v" + Guid.NewGuid().ToString().Replace("-", string.Empty);
-            var styleUrl = Main.FilesApi.GetPluginUrl("assets/css/style.css");
-            var jqueryUrl = Main.FilesApi.GetPluginUrl("assets/js/jquery.min.js");
-            var vueUrl = Main.FilesApi.GetPluginUrl("assets/js/vue.min.js");
-            var deviceUrl = Main.FilesApi.GetPluginUrl("assets/js/device.min.js");
-            var apiPayUrl = Main.FilesApi.GetApiJsonUrl(nameof(ApiPay));
-            var apiPaySuccessUrl = Main.FilesApi.GetApiJsonUrl(nameof(ApiPaySuccess));
-            var successUrl = Main.ParseApi.GetCurrentUrl(context) + "?isPaymentSuccess=" + true;
-            var apiWeixinIntervalUrl = Main.FilesApi.GetApiJsonUrl(nameof(ApiWeixinInterval));
-            var apiGetUrl = Main.FilesApi.GetApiJsonUrl(nameof(ApiGet));
+            var styleUrl = Plugin.FilesApi.GetPluginUrl("assets/css/style.css");
+            var jqueryUrl = Plugin.FilesApi.GetPluginUrl("assets/js/jquery.min.js");
+            var vueUrl = Plugin.FilesApi.GetPluginUrl("assets/js/vue.min.js");
+            var deviceUrl = Plugin.FilesApi.GetPluginUrl("assets/js/device.min.js");
+            var apiPayUrl = Plugin.FilesApi.GetApiJsonUrl(nameof(ApiPay));
+            var apiPaySuccessUrl = Plugin.FilesApi.GetApiJsonUrl(nameof(ApiPaySuccess));
+            var successUrl = Plugin.ParseApi.GetCurrentUrl(context) + "?isPaymentSuccess=" + true;
+            var apiWeixinIntervalUrl = Plugin.FilesApi.GetApiJsonUrl(nameof(ApiWeixinInterval));
+            var apiGetUrl = Plugin.FilesApi.GetApiJsonUrl(nameof(ApiGet));
+
+            var paymentApi = new PaymentApi(context.SiteId);
 
             var html = $@"
 <link rel=""stylesheet"" type=""text/css"" href=""{styleUrl}"" />
@@ -288,10 +301,10 @@ namespace SS.Payment.Parse
             isForceLogin: false,
             loginUrl: '{loginToPaymentUrl}',
             message: '',
-            isAlipayPc: {PaymentApi.Instance.IsAlipayPc.ToString().ToLower()},
-            isAlipayMobi: {PaymentApi.Instance.IsAlipayMobi.ToString().ToLower()},
-            isWeixin: {PaymentApi.Instance.IsWeixin.ToString().ToLower()},
-            isJdpay: {PaymentApi.Instance.IsJdpay.ToString().ToLower()},
+            isAlipayPc: {paymentApi.IsAlipayPc.ToString().ToLower()},
+            isAlipayMobi: {paymentApi.IsAlipayMobi.ToString().ToLower()},
+            isWeixin: {paymentApi.IsWeixin.ToString().ToLower()},
+            isJdpay: {paymentApi.IsJdpay.ToString().ToLower()},
             isMobile: device.mobile(),
             channel: 'alipay',
             isPayment: false,
@@ -342,7 +355,7 @@ namespace SS.Payment.Parse
             pay: function () {{
                 var $this = this;
                 var data = {{
-                    publishmentSystemId: {context.SiteId},
+                    siteId: {context.SiteId},
                     productId: '{productId}',
                     productName: '{productName}',
                     fee: {fee:N2},
@@ -407,7 +420,7 @@ namespace SS.Payment.Parse
             url : ""{apiGetUrl}"",
             type: ""POST"",
             data: JSON.stringify({{
-                publishmentSystemId: '{context.SiteId}'
+                siteId: '{context.SiteId}'
             }}),
             contentType: ""application/json; charset=utf-8"",
             dataType: ""json"",
@@ -426,7 +439,7 @@ namespace SS.Payment.Parse
 </script>
 ";
 
-            stlAnchor.InnerHtml = Main.ParseApi.ParseInnerXml(context.InnerXml, context);
+            stlAnchor.InnerHtml = Plugin.ParseApi.ParseInnerXml(context.InnerXml, context);
             stlAnchor.HRef = "javascript:;";
             stlAnchor.Attributes["onclick"] = $"{vueId}.open()";
 

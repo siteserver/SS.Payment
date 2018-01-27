@@ -39,8 +39,8 @@
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SiteServer.Plugin, Version=1.2.16.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\SiteServer.Plugin.1.2.16-beta\lib\net461\SiteServer.Plugin.dll</HintPath>
+    <Reference Include="SiteServer.Plugin, Version=1.2.19.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\SiteServer.Plugin.1.2.19-beta\lib\net45\SiteServer.Plugin.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -57,8 +57,24 @@
     <Compile Include="Controls\SqlPager.cs" />
     <Compile Include="Core\CacheUtils.cs" />
     <Compile Include="Core\PaymentApi.cs" />
+    <Compile Include="Core\QrCodeUtils.cs" />
     <Compile Include="Core\Utils.cs" />
-    <Compile Include="Main.cs" />
+    <Compile Include="Pages\PageIntegrationPay.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\PageIntegrationPayAlipayMobi.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\PageIntegrationPayAlipayPc.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\PageIntegrationPayJdpay.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\PageIntegrationPayWeixin.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Plugin.cs" />
     <Compile Include="Model\ConfigInfo.cs" />
     <Compile Include="Model\RecordInfo.cs" />
     <Compile Include="Pages\PageRecords.cs">
@@ -4356,17 +4372,19 @@
     <Compile Include="Third\WxPay\lib\WxPayApi.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="plugin.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="README.md" />
+    <None Include="SS.Payment.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
     <Folder Include="Third\Alipay\openapi\Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="logo.png" />
+    <Content Include="pageIntegrationPay.aspx" />
+    <Content Include="pageRecords.aspx" />
+    <Content Include="PageSettings.aspx" />
     <Content Include="Third\Alipay\openapi\readme.txt" />
     <Content Include="Third\Alipay\openapi\version.txt" />
   </ItemGroup>

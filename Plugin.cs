@@ -10,7 +10,7 @@ using SS.Payment.Provider;
 
 namespace SS.Payment
 {
-    public class Main : IPlugin
+    public class Plugin : IPlugin
     {
         public static DatabaseType DatabaseType { get; private set; }
         public static string ConnectionString { get; private set; }
@@ -25,13 +25,19 @@ namespace SS.Payment
 
         private static readonly Dictionary<int, ConfigInfo> ConfigInfoDict = new Dictionary<int, ConfigInfo>();
 
-        public static ConfigInfo GetConfigInfo(int publishmentSystemId)
+        public static ConfigInfo GetConfigInfo(int siteId)
         {
-            if (!ConfigInfoDict.ContainsKey(publishmentSystemId))
+            if (!ConfigInfoDict.ContainsKey(siteId))
             {
-                ConfigInfoDict[publishmentSystemId] = ConfigApi.GetConfig<ConfigInfo>(publishmentSystemId) ?? new ConfigInfo();
+                ConfigInfoDict[siteId] = ConfigApi.GetConfig<ConfigInfo>(siteId) ?? new ConfigInfo();
             }
-            return ConfigInfoDict[publishmentSystemId];
+            return ConfigInfoDict[siteId];
+        }
+
+        public static void SetConfigInfo(int siteId, ConfigInfo configInfo)
+        {
+            ConfigInfoDict[siteId] = configInfo;
+            ConfigApi.SetConfig(siteId, configInfo);
         }
 
         public void Startup(IContext context, IService service)
@@ -48,25 +54,25 @@ namespace SS.Payment
             RecordDao = new RecordDao(ConnectionString, DataApi);
 
             service
-                .AddDatabaseTable(RecordDao.TableName, RecordDao.Columns)
                 .AddSiteMenu(siteId => new Menu
                 {
-                    Text = "快速支付",
+                    Text = "在线支付",
                     IconClass = "ion-card",
                     Menus = new List<Menu>
                     {
                         new Menu
                         {
-                            Text = "快速支付记录",
+                            Text = "在线支付记录",
                             Href = $"{nameof(PageRecords)}.aspx"
                         },
                         new Menu
                         {
-                            Text = "快速支付设置",
-                            Href = $"{nameof(PageSettings)}.aspx"
+                            Text = "支付集成设置",
+                            Href = $"{nameof(PageIntegrationPay)}.aspx"
                         }
                     }
                 })
+                .AddDatabaseTable(RecordDao.TableName, RecordDao.Columns)
                 .AddStlElementParser(StlPayment.ElementName, StlPayment.Parse)
                 .AddJsonPost((request, name) =>
                 {
@@ -94,6 +100,16 @@ namespace SS.Payment
                     if (Utils.EqualsIgnoreCase(name, nameof(StlPayment.ApiQrCode)))
                     {
                         return StlPayment.ApiQrCode(request);
+                    }
+
+                    return new HttpResponseMessage(HttpStatusCode.NotFound);
+                })
+                .AddHttpPost((request, name) =>
+                {
+                    if (Utils.EqualsIgnoreCase(name, nameof(StlPayment.ApiRedirect)))
+                    {
+                        var successUrl = request.GetPostString("successUrl");
+                        StlPayment.ApiRedirect(successUrl);
                     }
 
                     return new HttpResponseMessage(HttpStatusCode.NotFound);

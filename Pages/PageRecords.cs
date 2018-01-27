@@ -17,18 +17,18 @@ namespace SS.Payment.Pages
 
         public Button BtnDelete;
 
-        private int _publishmentSystemId;
+        private int _siteId;
 
-        public static string GetRedirectUrl(int publishmentSystemId)
+        public static string GetRedirectUrl(int siteId)
         {
-            return Main.FilesApi.GetPluginUrl($"{nameof(PageRecords)}.aspx?publishmentSystemId={publishmentSystemId}");
+            return Plugin.FilesApi.GetPluginUrl($"{nameof(PageRecords)}.aspx?siteId={siteId}");
         }
 
 		public void Page_Load(object sender, EventArgs e)
         {
-            _publishmentSystemId = Convert.ToInt32(Request.QueryString["publishmentSystemId"]);
+            _siteId = Convert.ToInt32(Request.QueryString["siteId"]);
 
-            if (!Main.AdminApi.IsSiteAuthorized(_publishmentSystemId))
+            if (!Plugin.AdminApi.IsSiteAuthorized(_siteId))
             {
                 Response.Write("<h1>未授权访问</h1>");
                 Response.End();
@@ -40,13 +40,13 @@ namespace SS.Payment.Pages
             {
                 var array = Request.QueryString["idCollection"].Split(',');
                 var list = array.Select(s => Convert.ToInt32(s)).ToList();
-                Main.RecordDao.Delete(list);
+                Plugin.RecordDao.Delete(list);
                 LtlMessage.Text = Utils.GetMessageHtml("删除成功！", true);
             }
 
             SpContents.ControlToPaginate = RptContents;
             SpContents.ItemsPerPage = 20;
-            SpContents.SelectCommand = Main.RecordDao.GetSelectString(_publishmentSystemId);
+            SpContents.SelectCommand = Plugin.RecordDao.GetSelectString(_siteId);
             SpContents.SortField = nameof(RecordInfo.Id);
             SpContents.SortMode = "DESC";
             RptContents.ItemDataBound += RptContents_ItemDataBound;
@@ -62,7 +62,7 @@ $(""input[name='idCollection']:checked"").each(function () {{
 );
 if (ids.length > 0){{
     {Utils.SwalWarning("删除记录", "此操作将删除所选记录，确定吗？", "取 消", "删 除",
-                $"location.href='{GetRedirectUrl(_publishmentSystemId)}&delete={true}&idCollection=' + ids.join(',')")}
+                $"location.href='{GetRedirectUrl(_siteId)}&delete={true}&idCollection=' + ids.join(',')")}
 }} else {{
     {Utils.SwalError("请选择需要删除的记录！", string.Empty)}
 }}

@@ -14,28 +14,20 @@ namespace SS.Payment.Core
 {
     public class PaymentApi
     {
-        private PaymentApi() { }
+        private readonly int _siteId;
 
-        private static PaymentApi _instance;
-        public static PaymentApi Instance => _instance ?? (_instance = new PaymentApi());
-
-        private static ConfigInfo GetConfig()
+        public PaymentApi(int siteId)
         {
-            return Main.ConfigApi.GetConfig<ConfigInfo>(0) ?? new ConfigInfo();
+            _siteId = siteId;
         }
 
-        public bool IsAlipayPc
-        {
-            get
-            {
-                var config = GetConfig();
-                return config.IsAlipayPc;
-            }
-        }
+        private ConfigInfo ConfigInfo => Plugin.GetConfigInfo(_siteId);
+
+        public bool IsAlipayPc => ConfigInfo.IsAlipayPc;
 
         public string ChargeByAlipayPc(string productName, decimal amount, string orderNo, string returnUrl)
         {
-            var config = GetConfig();
+            var config = ConfigInfo;
             if (!config.IsAlipayPc) return null;
 
             if (config.AlipayPcIsMApi)
@@ -119,18 +111,11 @@ namespace SS.Payment.Core
             return response.Body;
         }
 
-        public bool IsAlipayMobi
-        {
-            get
-            {
-                var config = GetConfig();
-                return config.IsAlipayMobi;
-            }
-        }
+        public bool IsAlipayMobi => ConfigInfo.IsAlipayMobi;
 
         public string ChargeByAlipayMobi(string productName, decimal amount, string orderNo, string returnUrl)
         {
-            var config = GetConfig();
+            var config = ConfigInfo;
             if (!config.IsAlipayMobi) return null;
 
             if (config.AlipayMobiIsMApi)
@@ -204,18 +189,11 @@ namespace SS.Payment.Core
             return response.Body;
         }
 
-        public bool IsWeixin
-        {
-            get
-            {
-                var config = GetConfig();
-                return config.IsWeixin;
-            }
-        }
+        public bool IsWeixin => ConfigInfo.IsWeixin;
 
         public string ChargeByWeixin(string productName, decimal amount, string orderNo, string notifyUrl)
         {
-            var config = GetConfig();
+            var config = ConfigInfo;
 
             WxPayConfig.APPID = config.WeixinAppId;
             WxPayConfig.MCHID = config.WeixinMchId;
@@ -319,7 +297,7 @@ namespace SS.Payment.Core
         public void NotifyByWeixin(HttpRequest request, out bool isPaied, out string responseXml)
         {
             isPaied = false;
-            var config = GetConfig();
+            var config = ConfigInfo;
 
             WxPayConfig.APPID = config.WeixinAppId;
             WxPayConfig.MCHID = config.WeixinMchId;
@@ -399,18 +377,11 @@ namespace SS.Payment.Core
             responseXml = data.ToXml();
         }
 
-        public bool IsJdpay
-        {
-            get
-            {
-                var config = GetConfig();
-                return config.IsJdpay;
-            }
-        }
+        public bool IsJdpay => ConfigInfo.IsJdpay;
 
         public string ChargeByJdpay(string productName, decimal amount, string orderNo, string returnUrl)
         {
-            var config = GetConfig();
+            var config = ConfigInfo;
             if (!config.IsJdpay) return null;
 
             //var callbackUrl = Utils.AddProtocolToUrl(Pay.GetUrl(PageUtility.OuterApiUrl, returnUrl));

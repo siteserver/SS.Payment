@@ -13,21 +13,21 @@ namespace SS.Payment.Pages
         public DropDownList DdlIsForceLogin;
         public TextBox TbExpressCost;
 
-        private int _publishmentSystemId;
+        private int _siteId;
         private ConfigInfo _configInfo;
 
         public void Page_Load(object sender, EventArgs e)
         {
-            _publishmentSystemId = Convert.ToInt32(Request.QueryString["publishmentSystemId"]);
+            _siteId = Convert.ToInt32(Request.QueryString["siteId"]);
 
-            if (!Main.AdminApi.IsSiteAuthorized(_publishmentSystemId))
+            if (!Plugin.AdminApi.IsSiteAuthorized(_siteId))
             {
                 HttpContext.Current.Response.Write("<h1>未授权访问</h1>");
                 HttpContext.Current.Response.End();
                 return;
             }
 
-            _configInfo = Main.GetConfigInfo(_publishmentSystemId);
+            _configInfo = Plugin.GetConfigInfo(_siteId);
 
             if (IsPostBack) return;
 
@@ -40,7 +40,7 @@ namespace SS.Payment.Pages
 
             _configInfo.IsForceLogin = Convert.ToBoolean(DdlIsForceLogin.SelectedValue);
 
-            Main.ConfigApi.SetConfig(_publishmentSystemId, _configInfo);
+            Plugin.SetConfigInfo(_siteId, _configInfo);
             LtlMessage.Text = Utils.GetMessageHtml("快速支付设置修改成功！", true);
         }
     }

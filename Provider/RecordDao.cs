@@ -165,7 +165,7 @@ namespace SS.Payment.Provider
             return isPaied;
         }
 
-        public string GetSelectString(int publishmentSystemId)
+        public string GetSelectString(int siteId)
         {
             return $@"SELECT {nameof(RecordInfo.Id)}, 
             {nameof(RecordInfo.PublishmentSystemId)}, 
@@ -178,7 +178,7 @@ namespace SS.Payment.Provider
             {nameof(RecordInfo.IsPaied)},
             {nameof(RecordInfo.UserName)},
             {nameof(RecordInfo.AddDate)}
-            FROM {TableName} WHERE {nameof(RecordInfo.PublishmentSystemId)} = {publishmentSystemId} ORDER BY Id DESC";
+            FROM {TableName} WHERE {nameof(RecordInfo.PublishmentSystemId)} = {siteId} ORDER BY Id DESC";
         }
 
         public void Delete(List<int> deleteIdList)

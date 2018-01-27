@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -16,6 +15,100 @@ namespace SS.Payment.Core
 {
     public class Utils
     {
+        public static void Redirect(string url)
+        {
+            var response = HttpContext.Current.Response;
+            response.Clear();//这里是关键，清除在返回前已经设置好的标头信息，这样后面的跳转才不会报错
+            response.BufferOutput = true;//设置输出缓冲
+            if (!response.IsRequestBeingRedirected) //在跳转之前做判断,防止重复
+            {
+                response.Redirect(url, true);
+            }
+        }
+
+        public static bool ToBool(string boolStr)
+        {
+            bool boolean;
+            if (!bool.TryParse(boolStr?.Trim(), out boolean))
+            {
+                boolean = false;
+            }
+            return boolean;
+        }
+
+        public static void AddListItems(ListControl listControl, string trueText, string falseText)
+        {
+            if (listControl != null)
+            {
+                var item = new ListItem(trueText, true.ToString());
+                listControl.Items.Add(item);
+                item = new ListItem(falseText, false.ToString());
+                listControl.Items.Add(item);
+            }
+        }
+
+        public static void SelectSingleItem(ListControl listControl, string value)
+        {
+            if (listControl == null) return;
+
+            listControl.ClearSelection();
+
+            foreach (ListItem item in listControl.Items)
+            {
+                if (string.Equals(item.Value, value))
+                {
+                    item.Selected = true;
+                    break;
+                }
+            }
+        }
+
+        public static string GetShortGuid()
+        {
+            long i = 1;
+            foreach (var b in Guid.NewGuid().ToByteArray())
+            {
+                i *= b + 1;
+            }
+            return $"{i - DateTime.Now.Ticks:x}";
+        }
+
+        public static string GetShortGuid(bool isUppercase)
+        {
+            long i = 1;
+            foreach (var b in Guid.NewGuid().ToByteArray())
+            {
+                i *= b + 1;
+            }
+            string retval = $"{i - DateTime.Now.Ticks:x}";
+            return isUppercase ? retval.ToUpper() : retval.ToLower();
+        }
+
+        public static string SwalError(Page page, string title, string message)
+        {
+            var script = $@"swal({{
+  title: '{title}',
+  text: '{ReplaceNewline(message, string.Empty)}',
+  icon: 'error',
+  button: '关 闭',
+}});";
+            page.ClientScript.RegisterClientScriptBlock(page.GetType(), nameof(SwalError), script, true);
+
+            return script;
+        }
+
+        public static string SwalDom(Page page, string title, string elementId)
+        {
+            var script = $@"swal({{
+  title: '{title}',
+  content: $('#{elementId}')[0],
+  button: '关 闭',
+}});";
+            page.ClientScript.RegisterClientScriptBlock(page.GetType(), nameof(SwalDom), script, true);
+
+            return script;
+        }
+
         public static string AddProtocolToUrl(string url)
         {
             return AddProtocolToUrl(url, string.Empty);
@@ -153,6 +246,25 @@ namespace SS.Payment.Core
 
             url = url.Trim();
             return url.IndexOf("://", StringComparison.Ordinal) != -1 || url.StartsWith("javascript:");
+        }
+
+        public static string JsonSerialize(object obj)
+        {
+            try
+            {
+                var settings = new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                };
+                var timeFormat = new IsoDateTimeConverter { DateTimeFormat = "yyyy-MM-dd HH:mm:ss" };
+                settings.Converters.Add(timeFormat);
+
+                return JsonConvert.SerializeObject(obj, settings);
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
 
         public static T JsonDeserialize<T>(string json)
@@ -468,7 +580,7 @@ namespace SS.Payment.Core
                 }
                 else
                 {
-                    xmlDocument.LoadXml(XmlDeclaration + XmlNamespaceStart + Main.ParseApi.HtmlToXml(element) + XmlNamespaceEnd);
+                    xmlDocument.LoadXml(XmlDeclaration + XmlNamespaceStart + Plugin.ParseApi.HtmlToXml(element) + XmlNamespaceEnd);
                 }
             }
             catch
@@ -502,8 +614,11 @@ namespace SS.Payment.Core
             while (elementIe.MoveNext())
             {
                 var attr = (XmlAttribute)elementIe.Current;
-                var attributeName = attr.Name;
-                attributes.Add(attributeName, attr.Value);
+                if (attr != null)
+                {
+                    var attributeName = attr.Name;
+                    attributes.Add(attributeName, attr.Value);
+                }
             }
         }
 
@@ -590,14 +705,17 @@ namespace SS.Payment.Core
                         while (elementIe.MoveNext())
                         {
                             var attr = (XmlAttribute)elementIe.Current;
-                            var attributeName = attr.Name.ToLower();
-                            if (attributeName == "href")
+                            if (attr != null)
                             {
-                                attributes.Add(attr.Name, "javascript:;");
-                            }
-                            else if (attributeName != "onclick")
-                            {
-                                attributes.Add(attr.Name, attr.Value);
+                                var attributeName = attr.Name.ToLower();
+                                if (attributeName == "href")
+                                {
+                                    attributes.Add(attr.Name, "javascript:;");
+                                }
+                                else if (attributeName != "onclick")
+                                {
+                                    attributes.Add(attr.Name, attr.Value);
+                                }
                             }
                         }
                         attributes.Add("onclick", clickString);
