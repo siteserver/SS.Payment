@@ -7,9 +7,6 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 
 namespace SS.Payment.Core
 {
@@ -246,41 +243,6 @@ namespace SS.Payment.Core
 
             url = url.Trim();
             return url.IndexOf("://", StringComparison.Ordinal) != -1 || url.StartsWith("javascript:");
-        }
-
-        public static string JsonSerialize(object obj)
-        {
-            try
-            {
-                var settings = new JsonSerializerSettings
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                };
-                var timeFormat = new IsoDateTimeConverter { DateTimeFormat = "yyyy-MM-dd HH:mm:ss" };
-                settings.Converters.Add(timeFormat);
-
-                return JsonConvert.SerializeObject(obj, settings);
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
-
-        public static T JsonDeserialize<T>(string json)
-        {
-            try
-            {
-                var settings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
-                var timeFormat = new IsoDateTimeConverter { DateTimeFormat = "yyyy-MM-dd HH:mm:ss" };
-                settings.Converters.Add(timeFormat);
-
-                return JsonConvert.DeserializeObject<T>(json, settings);
-            }
-            catch
-            {
-                return default(T);
-            }
         }
 
         public static string GetMessageHtml(string message, bool isSuccess)

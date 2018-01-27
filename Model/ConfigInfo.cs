@@ -1,8 +1,5 @@
-﻿using Newtonsoft.Json;
-
-namespace SS.Payment.Model
+﻿namespace SS.Payment.Model
 {
-    [JsonObject(MemberSerialization.OptOut)]
     public class ConfigInfo
     {
         public bool IsForceLogin { get; set; } = false;
