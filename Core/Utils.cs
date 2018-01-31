@@ -542,7 +542,7 @@ namespace SS.Payment.Core
                 }
                 else
                 {
-                    xmlDocument.LoadXml(XmlDeclaration + XmlNamespaceStart + Plugin.ParseApi.HtmlToXml(element) + XmlNamespaceEnd);
+                    xmlDocument.LoadXml(XmlDeclaration + XmlNamespaceStart + Main.ApiCollection.ParseApi.HtmlToXml(element) + XmlNamespaceEnd);
                 }
             }
             catch

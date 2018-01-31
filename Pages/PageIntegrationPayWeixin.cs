@@ -20,15 +20,15 @@ namespace SS.Payment.Pages
 
         public static string GetRedirectUrl(int siteId)
         {
-            return Plugin.FilesApi.GetPluginUrl($"{nameof(PageIntegrationPayWeixin)}.aspx?siteId={siteId}");
+            return Main.ApiCollection.PluginApi.GetPluginUrl($"{nameof(PageIntegrationPayWeixin)}.aspx?siteId={siteId}");
         }
 
         public void Page_Load(object sender, EventArgs e)
         {
             _siteId = Convert.ToInt32(Request.QueryString["siteId"]);
-            _configInfo = Plugin.GetConfigInfo(_siteId);
+            _configInfo = Main.GetConfigInfo(_siteId);
 
-            if (!Plugin.AdminApi.IsSiteAuthorized(_siteId))
+            if (!Main.ApiCollection.AdminApi.IsSiteAuthorized(_siteId))
             {
                 Response.Write("<h1>未授权访问</h1>");
                 Response.End();
@@ -61,7 +61,7 @@ namespace SS.Payment.Pages
             _configInfo.WeixinMchId = TbMchId.Text;
             _configInfo.WeixinKey = TbKey.Text;
 
-            Plugin.SetConfigInfo(_siteId, _configInfo);
+            Main.SetConfigInfo(_siteId, _configInfo);
 
             Utils.Redirect(PageIntegrationPay.GetRedirectUrl(_siteId));
         }

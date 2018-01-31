@@ -20,14 +20,14 @@ namespace SS.Payment.Pages
         {
             _siteId = Convert.ToInt32(Request.QueryString["siteId"]);
 
-            if (!Plugin.AdminApi.IsSiteAuthorized(_siteId))
+            if (!Main.ApiCollection.AdminApi.IsSiteAuthorized(_siteId))
             {
                 HttpContext.Current.Response.Write("<h1>未授权访问</h1>");
                 HttpContext.Current.Response.End();
                 return;
             }
 
-            _configInfo = Plugin.GetConfigInfo(_siteId);
+            _configInfo = Main.GetConfigInfo(_siteId);
 
             if (IsPostBack) return;
 
@@ -40,7 +40,7 @@ namespace SS.Payment.Pages
 
             _configInfo.IsForceLogin = Convert.ToBoolean(DdlIsForceLogin.SelectedValue);
 
-            Plugin.SetConfigInfo(_siteId, _configInfo);
+            Main.SetConfigInfo(_siteId, _configInfo);
             LtlMessage.Text = Utils.GetMessageHtml("快速支付设置修改成功！", true);
         }
     }

@@ -5,6 +5,7 @@ using System.Web.UI.WebControls;
 using SS.Payment.Controls;
 using SS.Payment.Core;
 using SS.Payment.Model;
+using SS.Payment.Provider;
 
 namespace SS.Payment.Pages
 {
@@ -21,14 +22,14 @@ namespace SS.Payment.Pages
 
         public static string GetRedirectUrl(int siteId)
         {
-            return Plugin.FilesApi.GetPluginUrl($"{nameof(PageRecords)}.aspx?siteId={siteId}");
+            return Main.ApiCollection.PluginApi.GetPluginUrl($"{nameof(PageRecords)}.aspx?siteId={siteId}");
         }
 
 		public void Page_Load(object sender, EventArgs e)
         {
             _siteId = Convert.ToInt32(Request.QueryString["siteId"]);
 
-            if (!Plugin.AdminApi.IsSiteAuthorized(_siteId))
+            if (!Main.ApiCollection.AdminApi.IsSiteAuthorized(_siteId))
             {
                 Response.Write("<h1>未授权访问</h1>");
                 Response.End();
@@ -40,13 +41,13 @@ namespace SS.Payment.Pages
             {
                 var array = Request.QueryString["idCollection"].Split(',');
                 var list = array.Select(s => Convert.ToInt32(s)).ToList();
-                Plugin.RecordDao.Delete(list);
+                RecordDao.Delete(list);
                 LtlMessage.Text = Utils.GetMessageHtml("删除成功！", true);
             }
 
             SpContents.ControlToPaginate = RptContents;
             SpContents.ItemsPerPage = 20;
-            SpContents.SelectCommand = Plugin.RecordDao.GetSelectString(_siteId);
+            SpContents.SelectCommand = RecordDao.GetSelectString(_siteId);
             SpContents.SortField = nameof(RecordInfo.Id);
             SpContents.SortMode = "DESC";
             RptContents.ItemDataBound += RptContents_ItemDataBound;

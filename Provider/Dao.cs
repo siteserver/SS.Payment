@@ -4,16 +4,16 @@ namespace SS.Payment.Provider
 {
     public class Dao
     {
-        private readonly string _connectionString;
-        private readonly IDataApi _dataApi;
+        private static string _connectionString;
+        private static IDataApi _dataApi;
 
-        public Dao(string connectionString, IDataApi dataApi)
+        public static void Init(string connectionString, IDataApi dataApi)
         {
             _connectionString = connectionString;
             _dataApi = dataApi;
         }
 
-        public int GetIntResult(string sqlString)
+        public static int GetIntResult(string sqlString)
         {
             var count = 0;
 

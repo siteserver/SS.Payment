@@ -74,16 +74,16 @@ namespace SS.Payment.Provider
             }
         };
 
-        private readonly string _connectionString;
-        private readonly IDataApi _dataApi;
+        private static string _connectionString;
+        private static IDataApi _dataApi;
 
-        public RecordDao(string connectionString, IDataApi dataApi)
+        public static void Init(string connectionString, IDataApi dataApi)
         {
             _connectionString = connectionString;
             _dataApi = dataApi;
         }
 
-        public int Insert(RecordInfo recordInfo)
+        public static int Insert(RecordInfo recordInfo)
         {
             string sqlString = $@"INSERT INTO {TableName}
 (
@@ -127,7 +127,7 @@ namespace SS.Payment.Provider
             return _dataApi.ExecuteNonQueryAndReturnId(TableName, nameof(RecordInfo.Id), _connectionString, sqlString, parameters);
         }
 
-        public void UpdateIsPaied(string orderNo)
+        public static void UpdateIsPaied(string orderNo)
         {
             string sqlString = $@"UPDATE {TableName} SET
                 {nameof(RecordInfo.IsPaied)} = @{nameof(RecordInfo.IsPaied)} WHERE
@@ -142,7 +142,7 @@ namespace SS.Payment.Provider
             _dataApi.ExecuteNonQuery(_connectionString, sqlString, parameters.ToArray());
         }
 
-        public bool IsPaied(string orderNo)
+        public static bool IsPaied(string orderNo)
         {
             var isPaied = false;
 
@@ -165,7 +165,7 @@ namespace SS.Payment.Provider
             return isPaied;
         }
 
-        public string GetSelectString(int siteId)
+        public static string GetSelectString(int siteId)
         {
             return $@"SELECT {nameof(RecordInfo.Id)}, 
             {nameof(RecordInfo.PublishmentSystemId)}, 
@@ -181,7 +181,7 @@ namespace SS.Payment.Provider
             FROM {TableName} WHERE {nameof(RecordInfo.PublishmentSystemId)} = {siteId} ORDER BY Id DESC";
         }
 
-        public void Delete(List<int> deleteIdList)
+        public static void Delete(List<int> deleteIdList)
         {
             string sqlString =
                 $"DELETE FROM {TableName} WHERE Id IN ({string.Join(",", deleteIdList)})";

@@ -23,14 +23,14 @@ namespace SS.Payment.Pages
 
         public static string GetRedirectUrl(int siteId)
         {
-            return Plugin.FilesApi.GetPluginUrl($"{nameof(PageIntegrationPay)}.aspx?siteId={siteId}");
+            return Main.ApiCollection.PluginApi.GetPluginUrl($"{nameof(PageIntegrationPay)}.aspx?siteId={siteId}");
         }
 
         public void Page_Load(object sender, EventArgs e)
         {
             _siteId = Convert.ToInt32(Request.QueryString["siteId"]);
 
-            if (!Plugin.AdminApi.IsSiteAuthorized(_siteId))
+            if (!Main.ApiCollection.AdminApi.IsSiteAuthorized(_siteId))
             {
                 Response.Write("<h1>未授权访问</h1>");
                 Response.End();
@@ -71,7 +71,7 @@ namespace SS.Payment.Pages
                 LtlScript.Text = paymentApi.ChargeByJdpay("测试", 0.01M, Utils.GetShortGuid(), "https://www.jdpay.com");
             }
 
-            var configInfo = Plugin.GetConfigInfo(_siteId);
+            var configInfo = Main.GetConfigInfo(_siteId);
 
             LtlAlipayPc.Text = configInfo.IsAlipayPc ? $@"
                 <span class=""label label-primary"">已开通</span>

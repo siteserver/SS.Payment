@@ -39,7 +39,7 @@ namespace SS.Payment.Controls
                 orderByString2 = orderByString2.Replace(" ASC", " DESC");
                 orderByString2 = orderByString2.Replace(" DESC2", " ASC");
 
-                if (Plugin.DatabaseType == DatabaseType.MySql)
+                if (Main.DatabaseType == DatabaseType.MySql)
                 {
                     return $@"
 SELECT * FROM (
@@ -60,7 +60,7 @@ SELECT * FROM
             }
             else
             {
-                if (Plugin.DatabaseType == DatabaseType.MySql)
+                if (Main.DatabaseType == DatabaseType.MySql)
                 {
                     return $@"
 SELECT * FROM (
@@ -631,7 +631,7 @@ ORDER BY {SortField} {SortMode}";
                 return;
             }
 
-            var dataset = Plugin.DataApi.ExecuteDataset(cmd);
+            var dataset = Main.DataApi.ExecuteDataset(cmd);
             var data = dataset.Tables[0];
 
             // Configures the paged data source component
@@ -701,8 +701,8 @@ ORDER BY {SortField} {SortMode}";
 
             var cmdText = GetQueryPageCommandText(recsToRetrieve);
 
-            var conn = Plugin.DataApi.GetConnection(Plugin.ConnectionString);
-            var cmd = Plugin.DataApi.GetCommand();
+            var conn = Main.DataApi.GetConnection(Main.ConnectionString);
+            var cmd = Main.DataApi.GetCommand();
             cmd.Connection = conn;
             cmd.CommandText = cmdText;
             return cmd;
@@ -725,7 +725,7 @@ ORDER BY {SortField} {SortMode}";
         {
             var cmdText = GetQueryCountCommandText();
 
-            return Plugin.Dao.GetIntResult(cmdText);
+            return Main.Dao.GetIntResult(cmdText);
         }
 
         /// <summary>
