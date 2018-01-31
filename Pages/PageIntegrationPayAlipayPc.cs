@@ -27,7 +27,7 @@ namespace SS.Payment.Pages
 
         public static string GetRedirectUrl(int siteId)
         {
-            return Main.ApiCollection.PluginApi.GetPluginUrl($"{nameof(PageIntegrationPayAlipayPc)}.aspx?siteId={siteId}");
+            return Main.Instance.PluginApi.GetPluginUrl($"{nameof(PageIntegrationPayAlipayPc)}.aspx?siteId={siteId}");
         }
 
         public void Page_Load(object sender, EventArgs e)
@@ -35,7 +35,7 @@ namespace SS.Payment.Pages
             _siteId = Convert.ToInt32(Request.QueryString["siteId"]);
             _configInfo = Main.GetConfigInfo(_siteId);
 
-            if (!Main.ApiCollection.AdminApi.IsSiteAuthorized(_siteId))
+            if (!Main.Instance.AdminApi.IsSiteAuthorized(_siteId))
             {
                 Response.Write("<h1>未授权访问</h1>");
                 Response.End();

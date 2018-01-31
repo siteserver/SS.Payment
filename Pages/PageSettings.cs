@@ -20,7 +20,7 @@ namespace SS.Payment.Pages
         {
             _siteId = Convert.ToInt32(Request.QueryString["siteId"]);
 
-            if (!Main.ApiCollection.AdminApi.IsSiteAuthorized(_siteId))
+            if (!Main.Instance.AdminApi.IsSiteAuthorized(_siteId))
             {
                 HttpContext.Current.Response.Write("<h1>未授权访问</h1>");
                 HttpContext.Current.Response.End();

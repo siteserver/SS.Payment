@@ -14,13 +14,13 @@ namespace SS.Payment
     {
         private static readonly Dictionary<int, ConfigInfo> ConfigInfoDict = new Dictionary<int, ConfigInfo>();
 
-        public static IApiCollection ApiCollection { get; set; }
+        public static PluginBase Instance { get; set; }
 
         public static ConfigInfo GetConfigInfo(int siteId)
         {
             if (!ConfigInfoDict.ContainsKey(siteId))
             {
-                ConfigInfoDict[siteId] = ApiCollection.ConfigApi.GetConfig<ConfigInfo>(siteId) ?? new ConfigInfo();
+                ConfigInfoDict[siteId] = Instance.ConfigApi.GetConfig<ConfigInfo>(siteId) ?? new ConfigInfo();
             }
             return ConfigInfoDict[siteId];
         }
@@ -28,12 +28,12 @@ namespace SS.Payment
         public static void SetConfigInfo(int siteId, ConfigInfo configInfo)
         {
             ConfigInfoDict[siteId] = configInfo;
-            ApiCollection.ConfigApi.SetConfig(siteId, configInfo);
+            Instance.ConfigApi.SetConfig(siteId, configInfo);
         }
 
         public override void Startup(IService service)
         {
-            ApiCollection = this;
+            Instance = this;
 
             Dao.Init(ConnectionString, DataApi);
             RecordDao.Init(ConnectionString, DataApi);

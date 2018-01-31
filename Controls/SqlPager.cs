@@ -8,6 +8,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using SiteServer.Plugin;
 using SS.Payment.Core;
+using SS.Payment.Provider;
 
 namespace SS.Payment.Controls
 {
@@ -39,7 +40,7 @@ namespace SS.Payment.Controls
                 orderByString2 = orderByString2.Replace(" ASC", " DESC");
                 orderByString2 = orderByString2.Replace(" DESC2", " ASC");
 
-                if (Main.DatabaseType == DatabaseType.MySql)
+                if (Main.Instance.DatabaseType == DatabaseType.MySql)
                 {
                     return $@"
 SELECT * FROM (
@@ -60,7 +61,7 @@ SELECT * FROM
             }
             else
             {
-                if (Main.DatabaseType == DatabaseType.MySql)
+                if (Main.Instance.DatabaseType == DatabaseType.MySql)
                 {
                     return $@"
 SELECT * FROM (
@@ -631,7 +632,7 @@ ORDER BY {SortField} {SortMode}";
                 return;
             }
 
-            var dataset = Main.DataApi.ExecuteDataset(cmd);
+            var dataset = Main.Instance.DataApi.ExecuteDataset(cmd);
             var data = dataset.Tables[0];
 
             // Configures the paged data source component
@@ -701,8 +702,8 @@ ORDER BY {SortField} {SortMode}";
 
             var cmdText = GetQueryPageCommandText(recsToRetrieve);
 
-            var conn = Main.DataApi.GetConnection(Main.ConnectionString);
-            var cmd = Main.DataApi.GetCommand();
+            var conn = Main.Instance.DataApi.GetConnection(Main.Instance.ConnectionString);
+            var cmd = Main.Instance.DataApi.GetCommand();
             cmd.Connection = conn;
             cmd.CommandText = cmdText;
             return cmd;
@@ -725,7 +726,7 @@ ORDER BY {SortField} {SortMode}";
         {
             var cmdText = GetQueryCountCommandText();
 
-            return Main.Dao.GetIntResult(cmdText);
+            return Dao.GetIntResult(cmdText);
         }
 
         /// <summary>
