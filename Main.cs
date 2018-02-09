@@ -12,11 +12,13 @@ namespace SS.Payment
 {
     public class Main : PluginBase
     {
+        public const string PluginId = "SS.Payment";
+
         private static readonly Dictionary<int, ConfigInfo> ConfigInfoDict = new Dictionary<int, ConfigInfo>();
 
-        public static PluginBase Instance { get; set; }
+        internal static Main Instance { get; set; }
 
-        public static ConfigInfo GetConfigInfo(int siteId)
+        public ConfigInfo GetConfigInfo(int siteId)
         {
             if (!ConfigInfoDict.ContainsKey(siteId))
             {
@@ -25,7 +27,7 @@ namespace SS.Payment
             return ConfigInfoDict[siteId];
         }
 
-        public static void SetConfigInfo(int siteId, ConfigInfo configInfo)
+        public void SetConfigInfo(int siteId, ConfigInfo configInfo)
         {
             ConfigInfoDict[siteId] = configInfo;
             Instance.ConfigApi.SetConfig(siteId, configInfo);

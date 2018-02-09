@@ -15,7 +15,4 @@
     <copyright>Copyright 2018</copyright>
     <tags>SiteServer CMS Payment Plugin</tags>
   </metadata>
-  <files>
-    <file src="bin\ThoughtWorks.QRCode.dll" target="lib\net461" />
-  </files>
 </package>

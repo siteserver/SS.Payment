@@ -27,7 +27,7 @@ namespace SS.Payment.Pages
                 return;
             }
 
-            _configInfo = Main.GetConfigInfo(_siteId);
+            _configInfo = Main.Instance.GetConfigInfo(_siteId);
 
             if (IsPostBack) return;
 
@@ -40,7 +40,7 @@ namespace SS.Payment.Pages
 
             _configInfo.IsForceLogin = Convert.ToBoolean(DdlIsForceLogin.SelectedValue);
 
-            Main.SetConfigInfo(_siteId, _configInfo);
+            Main.Instance.SetConfigInfo(_siteId, _configInfo);
             LtlMessage.Text = Utils.GetMessageHtml("快速支付设置修改成功！", true);
         }
     }

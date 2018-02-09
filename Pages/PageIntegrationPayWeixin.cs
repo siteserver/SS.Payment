@@ -26,7 +26,7 @@ namespace SS.Payment.Pages
         public void Page_Load(object sender, EventArgs e)
         {
             _siteId = Convert.ToInt32(Request.QueryString["siteId"]);
-            _configInfo = Main.GetConfigInfo(_siteId);
+            _configInfo = Main.Instance.GetConfigInfo(_siteId);
 
             if (!Main.Instance.AdminApi.IsSiteAuthorized(_siteId))
             {
@@ -61,7 +61,7 @@ namespace SS.Payment.Pages
             _configInfo.WeixinMchId = TbMchId.Text;
             _configInfo.WeixinKey = TbKey.Text;
 
-            Main.SetConfigInfo(_siteId, _configInfo);
+            Main.Instance.SetConfigInfo(_siteId, _configInfo);
 
             Utils.Redirect(PageIntegrationPay.GetRedirectUrl(_siteId));
         }

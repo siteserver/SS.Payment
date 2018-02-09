@@ -71,7 +71,7 @@ namespace SS.Payment.Pages
                 LtlScript.Text = paymentApi.ChargeByJdpay("测试", 0.01M, Utils.GetShortGuid(), "https://www.jdpay.com");
             }
 
-            var configInfo = Main.GetConfigInfo(_siteId);
+            var configInfo = Main.Instance.GetConfigInfo(_siteId);
 
             LtlAlipayPc.Text = configInfo.IsAlipayPc ? $@"
                 <span class=""label label-primary"">已开通</span>
