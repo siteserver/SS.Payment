@@ -63,7 +63,7 @@ namespace SS.Payment.Parse
 
             var recordInfo = new RecordInfo
             {
-                PublishmentSystemId = siteId,
+                SiteId = siteId,
                 Message = message,
                 ProductId = productId,
                 ProductName = productName,

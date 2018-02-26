@@ -18,7 +18,7 @@ namespace SS.Payment.Provider
             },
             new TableColumn
             {
-                AttributeName = nameof(RecordInfo.PublishmentSystemId),
+                AttributeName = nameof(RecordInfo.SiteId),
                 DataType = DataType.Integer
             },
             new TableColumn
@@ -87,7 +87,7 @@ namespace SS.Payment.Provider
         {
             string sqlString = $@"INSERT INTO {TableName}
 (
-    {nameof(RecordInfo.PublishmentSystemId)},
+    {nameof(RecordInfo.SiteId)},
     {nameof(RecordInfo.Message)},
     {nameof(RecordInfo.ProductId)},
     {nameof(RecordInfo.ProductName)},
@@ -98,7 +98,7 @@ namespace SS.Payment.Provider
     {nameof(RecordInfo.UserName)},
     {nameof(RecordInfo.AddDate)}
 ) VALUES (
-    @{nameof(RecordInfo.PublishmentSystemId)}, 
+    @{nameof(RecordInfo.SiteId)}, 
     @{nameof(RecordInfo.Message)},
     @{nameof(RecordInfo.ProductId)},
     @{nameof(RecordInfo.ProductName)},
@@ -112,7 +112,7 @@ namespace SS.Payment.Provider
 
             var parameters = new[]
             {
-                _dataApi.GetParameter(nameof(recordInfo.PublishmentSystemId), recordInfo.PublishmentSystemId),
+                _dataApi.GetParameter(nameof(recordInfo.SiteId), recordInfo.SiteId),
                 _dataApi.GetParameter(nameof(recordInfo.Message), recordInfo.Message),
                 _dataApi.GetParameter(nameof(recordInfo.ProductId), recordInfo.ProductId),
                 _dataApi.GetParameter(nameof(recordInfo.ProductName), recordInfo.ProductName),
@@ -168,7 +168,7 @@ namespace SS.Payment.Provider
         public static string GetSelectString(int siteId)
         {
             return $@"SELECT {nameof(RecordInfo.Id)}, 
-            {nameof(RecordInfo.PublishmentSystemId)}, 
+            {nameof(RecordInfo.SiteId)}, 
             {nameof(RecordInfo.Message)},
             {nameof(RecordInfo.ProductId)},
             {nameof(RecordInfo.ProductName)},
@@ -178,7 +178,7 @@ namespace SS.Payment.Provider
             {nameof(RecordInfo.IsPaied)},
             {nameof(RecordInfo.UserName)},
             {nameof(RecordInfo.AddDate)}
-            FROM {TableName} WHERE {nameof(RecordInfo.PublishmentSystemId)} = {siteId} ORDER BY Id DESC";
+            FROM {TableName} WHERE {nameof(RecordInfo.SiteId)} = {siteId} ORDER BY Id DESC";
         }
 
         public static void Delete(List<int> deleteIdList)
