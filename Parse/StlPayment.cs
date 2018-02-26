@@ -184,9 +184,9 @@ namespace SS.Payment.Parse
             var redirectUrl = string.Empty;
             var weixinName = string.Empty;
 
-            foreach (var name in context.StlElementAttributes.Keys)
+            foreach (var name in context.StlAttributes.Keys)
             {
-                var value = context.StlElementAttributes[name];
+                var value = context.StlAttributes[name];
                 if (Utils.EqualsIgnoreCase(name, AttributeProductId))
                 {
                     productId = Main.Instance.ParseApi.ParseAttributeValue(value, context);
@@ -440,7 +440,7 @@ namespace SS.Payment.Parse
 </script>
 ";
 
-            stlAnchor.InnerHtml = Main.Instance.ParseApi.ParseInnerXml(context.StlElementInnerXml, context);
+            stlAnchor.InnerHtml = Main.Instance.ParseApi.ParseInnerXml(context.StlInnerXml, context);
             stlAnchor.HRef = "javascript:;";
             stlAnchor.Attributes["onclick"] = $"{vueId}.open()";
 
