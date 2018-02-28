@@ -3,7 +3,7 @@
   <metadata>
     <id>SS.Payment</id>
     <version>$version$</version>
-    <title>SiteServer CMS 支付插件</title>
+    <title>第三方支付插件</title>
     <authors>SiteServer CMS</authors>
     <owners>siteserver</owners>
     <licenseUrl>https://github.com/siteserver/SS.Payment/blob/master/LICENSE</licenseUrl>
