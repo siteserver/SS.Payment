@@ -23,7 +23,7 @@ namespace SS.Payment.Pages
 
         public static string GetRedirectUrl(int siteId)
         {
-            return Main.Instance.PluginApi.GetPluginUrl($"{nameof(PageIntegrationPayJdpay)}.aspx?siteId={siteId}");
+            return $"{nameof(PageIntegrationPayJdpay)}.aspx?siteId={siteId}";
         }
 
         public void Page_Load(object sender, EventArgs e)

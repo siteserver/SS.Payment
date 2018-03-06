@@ -27,7 +27,7 @@ namespace SS.Payment.Pages
 
         public static string GetRedirectUrl(int siteId)
         {
-            return Main.Instance.PluginApi.GetPluginUrl($"{nameof(PageIntegrationPayAlipayPc)}.aspx?siteId={siteId}");
+            return $"{nameof(PageIntegrationPayAlipayPc)}.aspx?siteId={siteId}";
         }
 
         public void Page_Load(object sender, EventArgs e)
