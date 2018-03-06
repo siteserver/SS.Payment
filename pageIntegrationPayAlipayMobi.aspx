@@ -114,7 +114,7 @@
 
         <div class="text-center">
           <asp:Button class="btn btn-primary" Text="确 定" OnClick="Submit_OnClick" runat="server" />
-          <asp:Button class="btn m-l-10" Text="返 回" OnClick="BtnReturn_OnClick" runat="server" />
+          <asp:Button class="btn m-l-10" Text="返 回" OnClick="BtnReturn_OnClick" CausesValidation="false" runat="server" />
         </div>
       </div>
 
