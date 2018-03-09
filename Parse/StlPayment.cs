@@ -158,7 +158,7 @@ namespace SS.Payment.Parse
             
             RecordDao.UpdateIsPaied(orderNo);
 
-            return null;
+            return new {};
         }
 
         public static object ApiWeixinInterval(IRequest request)
@@ -326,6 +326,9 @@ namespace SS.Payment.Parse
                 var interval = setInterval(function(){{
                     $.ajax({{
                         url : ""{apiWeixinIntervalUrl}"",
+                        xhrFields: {{
+                            withCredentials: true
+                        }},
                         type: ""POST"",
                         data: JSON.stringify({{orderNo: orderNo}}),
                         contentType: ""application/json; charset=utf-8"",
@@ -367,6 +370,9 @@ namespace SS.Payment.Parse
                 }};
                 $.ajax({{
                     url : ""{apiPayUrl}"",
+                    xhrFields: {{
+                        withCredentials: true
+                    }},
                     type: ""POST"",
                     data: JSON.stringify(data),
                     contentType: ""application/json; charset=utf-8"",
@@ -398,6 +404,9 @@ namespace SS.Payment.Parse
         $(document).ready(function(){{
             $.ajax({{
                 url : ""{apiPaySuccessUrl}"",
+                xhrFields: {{
+                    withCredentials: true
+                }},
                 type: ""POST"",
                 data: JSON.stringify({{
                     orderNo: orderNo
@@ -419,6 +428,9 @@ namespace SS.Payment.Parse
     }} else {{
         $.ajax({{
             url : ""{apiGetUrl}"",
+            xhrFields: {{
+                withCredentials: true
+            }},
             type: ""POST"",
             data: JSON.stringify({{
                 siteId: '{context.SiteId}'
