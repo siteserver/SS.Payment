@@ -406,7 +406,8 @@ namespace SS.Payment.Core
                 {"specId", string.Empty},
                 {"specName", string.Empty},
                 {"userType", string.Empty},
-                {"userId", config.JdpayUserId},
+                //{"userId", config.JdpayUserId},
+                {"userId", Utils.GetShortGuid()},
                 {"expireTime", string.Empty},
                 {"orderType", "1"},
                 {"industryCategoryCode", string.Empty}
