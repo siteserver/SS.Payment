@@ -232,8 +232,8 @@ namespace SS.Payment.Parse
             }
 
             string template = $@"
-<div class=""mask1_bg mask1_bg_cut"" v-show=""isPayment || isWxQrCode || isPaymentSuccess"" @click=""isPayment = isWxQrCode = isPaymentSuccess = false""></div>
-<div class=""detail_alert detail_alert_cut"" v-show=""isPayment"">
+<div class=""mask1_bg mask1_bg_cut"" v-show=""isPayment || isWxQrCode || isPaymentSuccess"" @click=""isPayment = isWxQrCode = isPaymentSuccess = false"" style=""display: none""></div>
+<div class=""detail_alert detail_alert_cut"" v-show=""isPayment"" style=""display: none"">
   <div class=""close"" @click=""isPayment = isWxQrCode = isPaymentSuccess = false""></div>
   <div class=""alert_input"">
     金额: ¥{fee:N2}元
@@ -252,7 +252,7 @@ namespace SS.Payment.Parse
     <a href=""javascript:;"" @click=""pay"" class=""pay_go"">立即支付</a>
   </div>
 </div>
-<div class=""detail_alert detail_alert_cut"" v-show=""isWxQrCode"">
+<div class=""detail_alert detail_alert_cut"" v-show=""isWxQrCode"" style=""display: none"">
   <div class=""close"" @click=""isPayment = isWxQrCode = isPaymentSuccess = false""></div>
   <div class=""pay_list"">
     <p style=""text-align: center""> 打开手机微信，扫一扫下面的二维码，即可完成支付</p>
@@ -260,7 +260,7 @@ namespace SS.Payment.Parse
     <p style=""margin-left: 195px;margin-bottom: 80px;""><img :src=""qrCodeUrl"" style=""width: 200px;height: 200px;""></p>
   </div>
 </div>
-<div class=""detail_alert detail_alert_cut"" v-show=""isPaymentSuccess"">
+<div class=""detail_alert detail_alert_cut"" v-show=""isPaymentSuccess"" style=""display: none"">
   <div class=""close"" @click=""isPayment = isWxQrCode = isPaymentSuccess = false""></div>
   <div class=""pay_list"">
     <p style=""text-align: center"">支付成功，谢谢支持</p>

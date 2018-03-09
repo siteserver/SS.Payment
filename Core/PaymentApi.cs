@@ -385,7 +385,7 @@ namespace SS.Payment.Core
             if (!config.IsJdpay) return null;
 
             //var callbackUrl = Utils.AddProtocolToUrl(Pay.GetUrl(PageUtility.OuterApiUrl, returnUrl));
-            var callbackUrl = string.Empty;
+            var callbackUrl = returnUrl;
 
             var orderInfoDic = new SortedDictionary<string, string>
             {
