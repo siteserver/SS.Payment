@@ -28,7 +28,6 @@
 
         public bool IsJdpay { get; set; }
         public string JdpayMerchant { get; set; }
-        public string JdpayUserId { get; set; }
         public string JdpayMd5Key { get; set; }
         public string JdpayDesKey { get; set; }
         public string JdpayPublicKey { get; set; }

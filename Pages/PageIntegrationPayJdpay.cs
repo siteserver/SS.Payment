@@ -12,7 +12,6 @@ namespace SS.Payment.Pages
         public PlaceHolder PhSettings;
 
         public TextBox TbMerchant;
-        public TextBox TbUserId;
         public TextBox TbMd5Key;
         public TextBox TbDesKey;
         public TextBox TbPublicKey;
@@ -46,7 +45,6 @@ namespace SS.Payment.Pages
             PhSettings.Visible = _configInfo.IsJdpay;
 
             TbMerchant.Text = _configInfo.JdpayMerchant;
-            TbUserId.Text = _configInfo.JdpayUserId;
             TbMd5Key.Text = _configInfo.JdpayMd5Key;
             TbDesKey.Text = _configInfo.JdpayDesKey;
             TbPublicKey.Text = _configInfo.JdpayPublicKey;
@@ -75,7 +73,6 @@ namespace SS.Payment.Pages
             //}
 
             _configInfo.JdpayMerchant = TbMerchant.Text;
-            _configInfo.JdpayUserId = TbUserId.Text;
             _configInfo.JdpayMd5Key = TbMd5Key.Text;
             _configInfo.JdpayDesKey = TbDesKey.Text;
             _configInfo.JdpayPublicKey = TbPublicKey.Text;
