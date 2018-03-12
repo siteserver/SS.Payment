@@ -84,7 +84,7 @@ namespace SS.Payment.Parse
             }
             if (channel == "weixin")
             {
-                var notifyUrl = Main.Instance.PluginApi.GetPluginApiUrl(nameof(ApiWeixinNotify), orderNo);
+                var notifyUrl = Main.Instance.PluginApi.GetPluginApiUrl(nameof(ApiWeixinNotify), orderNo) + "?siteId=" + siteId;
                 var url = HttpUtility.UrlEncode(paymentApi.ChargeByWeixin(productName, fee, orderNo, notifyUrl));
                 var qrCodeUrl =
                     $"{Main.Instance.PluginApi.GetPluginApiUrl(nameof(ApiQrCode))}?qrcode={url}";
@@ -131,15 +131,16 @@ namespace SS.Payment.Parse
 
         public static HttpResponseMessage ApiWeixinNotify(IRequest request, string orderNo)
         {
-            var siteId = request.GetPostInt("siteId");
-
             var response = new HttpResponseMessage();
 
+            var siteId = request.GetQueryInt("siteId");
             var paymentApi = new PaymentApi(siteId);
 
             bool isPaied;
             string responseXml;
             paymentApi.NotifyByWeixin(request.HttpRequest, out isPaied, out responseXml);
+            //var filePath = Path.Combine(Main.Instance.PhysicalApplicationPath, "log.txt");
+            //File.WriteAllText(filePath, responseXml);
             if (isPaied)
             {
                 RecordDao.UpdateIsPaied(orderNo);
