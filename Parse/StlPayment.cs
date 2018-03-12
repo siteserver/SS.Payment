@@ -301,7 +301,6 @@ namespace SS.Payment.Parse
             success: function(data)
             {{
                 {vueId}.isUserLoggin = data.isUserLoggin;
-                {vueId}.isForceLogin = data.isForceLogin;
             }},
             error: function (err)
             {{
@@ -327,14 +326,9 @@ namespace SS.Payment.Parse
 
         public static object ApiGet(IRequest request)
         {
-            var siteId = request.GetPostInt("siteId");
-
-            var configInfo = Main.Instance.ConfigApi.GetConfig<ConfigInfo>(siteId);
-
             return new
             {
-                request.IsUserLoggin,
-                IsForceLogin = configInfo != null && configInfo.IsForceLogin
+                request.IsUserLoggin
             };
         }
 

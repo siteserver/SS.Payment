@@ -2,8 +2,6 @@
 {
     public class ConfigInfo
     {
-        public bool IsForceLogin { get; set; } = false;
-
         public bool IsAlipayPc { get; set; }
         public bool AlipayPcIsMApi { get; set; }
         public string AlipayPcAppId { get; set; }

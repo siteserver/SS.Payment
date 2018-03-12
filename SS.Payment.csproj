@@ -80,9 +80,6 @@
     <Compile Include="Pages\PageRecords.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\PageSettings.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="Parse\StlPayment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Provider\RecordDao.cs" />
@@ -4413,7 +4410,6 @@
     <Content Include="pageIntegrationPayJdpay.aspx" />
     <Content Include="pageIntegrationPayWeixin.aspx" />
     <Content Include="pageRecords.aspx" />
-    <Content Include="PageSettings.aspx" />
     <Content Include="Third\Alipay\openapi\readme.txt" />
     <Content Include="Third\Alipay\openapi\version.txt" />
   </ItemGroup>
