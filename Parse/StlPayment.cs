@@ -27,152 +27,7 @@ namespace SS.Payment.Parse
         public const string AttributeLoginUrl = "loginUrl";
         public const string AttributeRedirectUrl = "redirectUrl";
         public const string AttributeWeixinName = "weixinName";
-
-        public static void ApiRedirect(string successUrl)
-        {
-            Utils.Redirect(successUrl);
-        }
-
-        public static object ApiGet(IRequest request)
-        {
-            var siteId = request.GetPostInt("siteId");
-
-            var configInfo = Main.Instance.ConfigApi.GetConfig<ConfigInfo>(siteId);
-
-            return new
-            {
-                request.IsUserLoggin,
-                IsForceLogin = configInfo != null && configInfo.IsForceLogin
-            };
-        }
-
-        public static object ApiPay(IRequest request)
-        {
-            var siteId = request.GetPostInt("siteId");
-            var productId = request.GetPostString("productId");
-            var productName = request.GetPostString("productName");
-            var fee = request.GetPostDecimal("fee");
-            var channel = request.GetPostString("channel");
-            var message = request.GetPostString("message");
-            var isMobile = request.GetPostBool("isMobile");
-            var successUrl = request.GetPostString("successUrl");
-            var orderNo = Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", "");
-            successUrl += "&orderNo=" + orderNo;
-
-            var paymentApi = new PaymentApi(siteId);
-
-            var recordInfo = new RecordInfo
-            {
-                SiteId = siteId,
-                Message = message,
-                ProductId = productId,
-                ProductName = productName,
-                Fee = fee,
-                OrderNo = orderNo,
-                Channel = channel,
-                IsPaied = false,
-                UserName = request.UserName,
-                AddDate = DateTime.Now
-            };
-            RecordDao.Insert(recordInfo);
-
-            if (channel == "alipay")
-            {
-                return isMobile
-                    ? paymentApi.ChargeByAlipayMobi(productName, fee, orderNo, successUrl)
-                    : paymentApi.ChargeByAlipayPc(productName, fee, orderNo, successUrl);
-            }
-            if (channel == "weixin")
-            {
-                var notifyUrl = Main.Instance.PluginApi.GetPluginApiUrl(nameof(ApiWeixinNotify), orderNo) + "?siteId=" + siteId;
-                var url = HttpUtility.UrlEncode(paymentApi.ChargeByWeixin(productName, fee, orderNo, notifyUrl));
-                var qrCodeUrl =
-                    $"{Main.Instance.PluginApi.GetPluginApiUrl(nameof(ApiQrCode))}?qrcode={url}";
-                return new
-                {
-                    qrCodeUrl,
-                    orderNo
-                };
-            }
-            if (channel == "jdpay")
-            {
-                return paymentApi.ChargeByJdpay(productName, fee, orderNo, successUrl);
-            }
-
-            return null;
-        }
-
-        public static HttpResponseMessage ApiQrCode(IRequest request)
-        {
-            var response = new HttpResponseMessage();
-
-            var qrcode = request.GetQueryString("qrcode");
-            var qrCodeEncoder = new QRCodeEncoder
-            {
-                QRCodeEncodeMode = QRCodeEncoder.ENCODE_MODE.BYTE,
-                QRCodeErrorCorrect = QRCodeEncoder.ERROR_CORRECTION.M,
-                QRCodeVersion = 0,
-                QRCodeScale = 4
-            };
-
-            //将字符串生成二维码图片
-            var image = qrCodeEncoder.Encode(qrcode, Encoding.Default);
-
-            //保存为PNG到内存流  
-            var ms = new MemoryStream();
-            image.Save(ms, ImageFormat.Png);
-
-            response.Content = new ByteArrayContent(ms.GetBuffer());
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
-            response.StatusCode = HttpStatusCode.OK;
-
-            return response;
-        }
-
-        public static HttpResponseMessage ApiWeixinNotify(IRequest request, string orderNo)
-        {
-            var response = new HttpResponseMessage();
-
-            var siteId = request.GetQueryInt("siteId");
-            var paymentApi = new PaymentApi(siteId);
-
-            bool isPaied;
-            string responseXml;
-            paymentApi.NotifyByWeixin(request.HttpRequest, out isPaied, out responseXml);
-            //var filePath = Path.Combine(Main.Instance.PhysicalApplicationPath, "log.txt");
-            //File.WriteAllText(filePath, responseXml);
-            if (isPaied)
-            {
-                RecordDao.UpdateIsPaied(orderNo);
-            }
-
-            response.Content = new StringContent(responseXml);
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/xml");
-            response.StatusCode = HttpStatusCode.OK;
-
-            return response;
-        }
-
-        public static object ApiPaySuccess(IRequest request)
-        {
-            var orderNo = request.GetPostString("orderNo");
-            
-            RecordDao.UpdateIsPaied(orderNo);
-
-            return new {};
-        }
-
-        public static object ApiWeixinInterval(IRequest request)
-        {
-            var orderNo = request.GetPostString("orderNo");
-
-            var isPaied = RecordDao.IsPaied(orderNo);
-
-            return new
-            {
-                isPaied
-            };
-        }
+        public const string AttributeIsForceLogin = "isForceLogin";
 
         public static string Parse(IParseContext context)
         {
@@ -184,6 +39,7 @@ namespace SS.Payment.Parse
             var loginUrl = string.Empty;
             var redirectUrl = string.Empty;
             var weixinName = string.Empty;
+            var isForceLogin = false;
 
             foreach (var name in context.StlAttributes.Keys)
             {
@@ -212,6 +68,10 @@ namespace SS.Payment.Parse
                 else if (Utils.EqualsIgnoreCase(name, AttributeWeixinName))
                 {
                     weixinName = Main.Instance.ParseApi.ParseAttributeValue(value, context);
+                }
+                else if (Utils.EqualsIgnoreCase(name, AttributeIsForceLogin))
+                {
+                    isForceLogin = Utils.ToBool(Main.Instance.ParseApi.ParseAttributeValue(value, context));
                 }
                 else
                 {
@@ -300,7 +160,7 @@ namespace SS.Payment.Parse
         el: '#{elementId}',
         data: {{
             isUserLoggin: false,
-            isForceLogin: false,
+            isForceLogin: {isForceLogin.ToString().ToLower()},
             loginUrl: '{loginToPaymentUrl}',
             message: '',
             isAlipayPc: {paymentApi.IsAlipayPc.ToString().ToLower()},
@@ -458,6 +318,152 @@ namespace SS.Payment.Parse
             stlAnchor.Attributes["onclick"] = $"{vueId}.open()";
 
             return Utils.GetControlRenderHtml(stlAnchor) + html;
+        }
+
+        public static void ApiRedirect(string successUrl)
+        {
+            Utils.Redirect(successUrl);
+        }
+
+        public static object ApiGet(IRequest request)
+        {
+            var siteId = request.GetPostInt("siteId");
+
+            var configInfo = Main.Instance.ConfigApi.GetConfig<ConfigInfo>(siteId);
+
+            return new
+            {
+                request.IsUserLoggin,
+                IsForceLogin = configInfo != null && configInfo.IsForceLogin
+            };
+        }
+
+        public static object ApiPay(IRequest request)
+        {
+            var siteId = request.GetPostInt("siteId");
+            var productId = request.GetPostString("productId");
+            var productName = request.GetPostString("productName");
+            var fee = request.GetPostDecimal("fee");
+            var channel = request.GetPostString("channel");
+            var message = request.GetPostString("message");
+            var isMobile = request.GetPostBool("isMobile");
+            var successUrl = request.GetPostString("successUrl");
+            var orderNo = Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", "");
+            successUrl += "&orderNo=" + orderNo;
+
+            var paymentApi = new PaymentApi(siteId);
+
+            var recordInfo = new RecordInfo
+            {
+                SiteId = siteId,
+                Message = message,
+                ProductId = productId,
+                ProductName = productName,
+                Fee = fee,
+                OrderNo = orderNo,
+                Channel = channel,
+                IsPaied = false,
+                UserName = request.UserName,
+                AddDate = DateTime.Now
+            };
+            RecordDao.Insert(recordInfo);
+
+            if (channel == "alipay")
+            {
+                return isMobile
+                    ? paymentApi.ChargeByAlipayMobi(productName, fee, orderNo, successUrl)
+                    : paymentApi.ChargeByAlipayPc(productName, fee, orderNo, successUrl);
+            }
+            if (channel == "weixin")
+            {
+                var notifyUrl = Main.Instance.PluginApi.GetPluginApiUrl(nameof(ApiWeixinNotify), orderNo) + "?siteId=" + siteId;
+                var url = HttpUtility.UrlEncode(paymentApi.ChargeByWeixin(productName, fee, orderNo, notifyUrl));
+                var qrCodeUrl =
+                    $"{Main.Instance.PluginApi.GetPluginApiUrl(nameof(ApiQrCode))}?qrcode={url}";
+                return new
+                {
+                    qrCodeUrl,
+                    orderNo
+                };
+            }
+            if (channel == "jdpay")
+            {
+                return paymentApi.ChargeByJdpay(productName, fee, orderNo, successUrl);
+            }
+
+            return null;
+        }
+
+        public static HttpResponseMessage ApiQrCode(IRequest request)
+        {
+            var response = new HttpResponseMessage();
+
+            var qrcode = request.GetQueryString("qrcode");
+            var qrCodeEncoder = new QRCodeEncoder
+            {
+                QRCodeEncodeMode = QRCodeEncoder.ENCODE_MODE.BYTE,
+                QRCodeErrorCorrect = QRCodeEncoder.ERROR_CORRECTION.M,
+                QRCodeVersion = 0,
+                QRCodeScale = 4
+            };
+
+            //将字符串生成二维码图片
+            var image = qrCodeEncoder.Encode(qrcode, Encoding.Default);
+
+            //保存为PNG到内存流  
+            var ms = new MemoryStream();
+            image.Save(ms, ImageFormat.Png);
+
+            response.Content = new ByteArrayContent(ms.GetBuffer());
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+            response.StatusCode = HttpStatusCode.OK;
+
+            return response;
+        }
+
+        public static HttpResponseMessage ApiWeixinNotify(IRequest request, string orderNo)
+        {
+            var response = new HttpResponseMessage();
+
+            var siteId = request.GetQueryInt("siteId");
+            var paymentApi = new PaymentApi(siteId);
+
+            bool isPaied;
+            string responseXml;
+            paymentApi.NotifyByWeixin(request.HttpRequest, out isPaied, out responseXml);
+            //var filePath = Path.Combine(Main.Instance.PhysicalApplicationPath, "log.txt");
+            //File.WriteAllText(filePath, responseXml);
+            if (isPaied)
+            {
+                RecordDao.UpdateIsPaied(orderNo);
+            }
+
+            response.Content = new StringContent(responseXml);
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/xml");
+            response.StatusCode = HttpStatusCode.OK;
+
+            return response;
+        }
+
+        public static object ApiPaySuccess(IRequest request)
+        {
+            var orderNo = request.GetPostString("orderNo");
+            
+            RecordDao.UpdateIsPaied(orderNo);
+
+            return new {};
+        }
+
+        public static object ApiWeixinInterval(IRequest request)
+        {
+            var orderNo = request.GetPostString("orderNo");
+
+            var isPaied = RecordDao.IsPaied(orderNo);
+
+            return new
+            {
+                isPaied
+            };
         }
     }
 }
