@@ -39,8 +39,8 @@
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SiteServer.Plugin, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\SiteServer.Plugin.1.4.0\lib\net45\SiteServer.Plugin.dll</HintPath>
+    <Reference Include="SiteServer.Plugin, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\SiteServer.Plugin.1.5.0\lib\net45\SiteServer.Plugin.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -4380,6 +4380,7 @@
     <None Include="assets\plugin-utils\fonts\ionicons.woff" />
     <None Include="NuGet.config" />
     <None Include="packages.config" />
+    <None Include="SS.Payment.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Third\Alipay\openapi\Properties\" />
@@ -4404,6 +4405,7 @@
     <Content Include="assets\plugin-utils\js\bootstrap.min.js" />
     <Content Include="assets\plugin-utils\js\jquery.min.js" />
     <Content Include="assets\plugin-utils\js\plugin-utils.js" />
+    <Content Include="logo.svg" />
     <Content Include="pageIntegrationPay.aspx" />
     <Content Include="pageIntegrationPayAlipayMobi.aspx" />
     <Content Include="pageIntegrationPayAlipayPc.aspx" />

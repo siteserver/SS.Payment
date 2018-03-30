@@ -8,9 +8,9 @@
     <owners>siteserver</owners>
     <licenseUrl>https://github.com/siteserver/SS.Payment/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/siteserver/SS.Payment</projectUrl>
-    <iconUrl>https://github.com/siteserver/SS.Payment/raw/master/logo.png</iconUrl>
+    <iconUrl>http://plugins.siteserver.cn/ss.payment/logo.svg</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>实现微信支付以及支付宝支付功能</description>
+    <description>实现微信支付、支付宝支付以及京东支付功能</description>
     <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
     <copyright>Copyright 2018</copyright>
     <tags>SiteServer CMS Payment Plugin</tags>
