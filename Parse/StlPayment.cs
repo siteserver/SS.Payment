@@ -312,7 +312,7 @@ namespace SS.Payment.Parse
 </script>
 ";
 
-            stlAnchor.InnerHtml = Main.Instance.ParseApi.ParseInnerXml(context.StlInnerXml, context);
+            stlAnchor.InnerHtml = Main.Instance.ParseApi.Parse(context.StlInnerHtml, context);
             stlAnchor.HRef = "javascript:;";
             stlAnchor.Attributes["onclick"] = $"{vueId}.open()";
 

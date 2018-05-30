@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Xml;
 
 namespace SS.Payment.Core
 {
@@ -522,68 +521,6 @@ namespace SS.Payment.Core
             return list;
         }
 
-        private const string XmlDeclaration = "<?xml version='1.0'?>";
-
-        private const string XmlNamespaceStart = "<root>";
-
-        private const string XmlNamespaceEnd = "</root>";
-
-        public static XmlDocument GetXmlDocument(string element, bool isXml)
-        {
-            var xmlDocument = new XmlDocument
-            {
-                PreserveWhitespace = true
-            };
-            try
-            {
-                if (isXml)
-                {
-                    xmlDocument.LoadXml(XmlDeclaration + XmlNamespaceStart + element + XmlNamespaceEnd);
-                }
-                else
-                {
-                    xmlDocument.LoadXml(XmlDeclaration + XmlNamespaceStart + Main.Instance.ParseApi.HtmlToXml(element) + XmlNamespaceEnd);
-                }
-            }
-            catch
-            {
-                // ignored
-            }
-            //catch(Exception e)
-            //{
-            //    TraceUtils.Warn(e.ToString());
-            //    throw e;
-            //}
-            return xmlDocument;
-        }
-
-        public static void ParseHtmlElement(string htmlElement, out string tagName, out string innerXml, out NameValueCollection attributes)
-        {
-            tagName = string.Empty;
-            innerXml = string.Empty;
-            attributes = new NameValueCollection();
-
-            var document = GetXmlDocument(htmlElement, false);
-            XmlNode elementNode = document.DocumentElement;
-            if (elementNode == null) return;
-
-            elementNode = elementNode.FirstChild;
-            tagName = elementNode.Name;
-            innerXml = elementNode.InnerXml;
-            if (elementNode.Attributes == null) return;
-
-            var elementIe = elementNode.Attributes.GetEnumerator();
-            while (elementIe.MoveNext())
-            {
-                var attr = (XmlAttribute)elementIe.Current;
-                if (attr != null)
-                {
-                    var attributeName = attr.Name;
-                    attributes.Add(attributeName, attr.Value);
-                }
-            }
-        }
-
         public static string GetHtmlElementById(string html, string id)
         {
             const RegexOptions options = RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline | RegexOptions.IgnoreCase;
@@ -644,68 +581,6 @@ namespace SS.Payment.Core
             }
 
             return string.Empty;
-        }
-
-        public static void RewriteSubmitButton(StringBuilder builder, string clickString)
-        {
-            var submitElement = GetHtmlElementByRole(builder.ToString(), "submit");
-            if (string.IsNullOrEmpty(submitElement))
-            {
-                submitElement = GetHtmlElementById(builder.ToString(), "submit");
-            }
-            if (!string.IsNullOrEmpty(submitElement))
-            {
-                var document = GetXmlDocument(submitElement, false);
-                XmlNode elementNode = document.DocumentElement;
-                if (elementNode != null)
-                {
-                    elementNode = elementNode.FirstChild;
-                    if (elementNode.Attributes != null)
-                    {
-                        var elementIe = elementNode.Attributes.GetEnumerator();
-                        var attributes = new StringDictionary();
-                        while (elementIe.MoveNext())
-                        {
-                            var attr = (XmlAttribute)elementIe.Current;
-                            if (attr != null)
-                            {
-                                var attributeName = attr.Name.ToLower();
-                                if (attributeName == "href")
-                                {
-                                    attributes.Add(attr.Name, "javascript:;");
-                                }
-                                else if (attributeName != "onclick")
-                                {
-                                    attributes.Add(attr.Name, attr.Value);
-                                }
-                            }
-                        }
-                        attributes.Add("onclick", clickString);
-                        attributes.Remove("id");
-                        attributes.Remove("name");
-
-                        //attributes.Add("id", "submit_" + styleID);
-
-                        if (EqualsIgnoreCase(elementNode.Name, "a"))
-                        {
-                            attributes.Remove("href");
-                            attributes.Add("href", "javascript:;");
-                        }
-
-                        if (!string.IsNullOrEmpty(elementNode.InnerXml))
-                        {
-                            builder.Replace(submitElement,
-                                $@"<{elementNode.Name} {ToAttributesString(attributes)}>{elementNode.InnerXml}</{elementNode
-                                    .Name}>");
-                        }
-                        else
-                        {
-                            builder.Replace(submitElement,
-                                $@"<{elementNode.Name} {ToAttributesString(attributes)}/>");
-                        }
-                    }
-                }
-            }
         }
 
         public static string ToAttributesString(NameValueCollection attributes)
