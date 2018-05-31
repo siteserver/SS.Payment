@@ -41,7 +41,7 @@ namespace SS.Payment.Parse
             var weixinName = string.Empty;
             var isForceLogin = false;
 
-            foreach (var name in context.StlAttributes.Keys)
+            foreach (var name in context.StlAttributes.AllKeys)
             {
                 var value = context.StlAttributes[name];
                 if (Utils.EqualsIgnoreCase(name, AttributeProductId))
