@@ -137,11 +137,11 @@ namespace SS.Payment.Parse
             var jqueryUrl = Main.Instance.PluginApi.GetPluginUrl("assets/js/jquery.min.js");
             var vueUrl = Main.Instance.PluginApi.GetPluginUrl("assets/js/vue.min.js");
             var deviceUrl = Main.Instance.PluginApi.GetPluginUrl("assets/js/device.min.js");
-            var apiPayUrl = Main.Instance.PluginApi.GetPluginApiUrl(nameof(ApiPay));
-            var apiPaySuccessUrl = Main.Instance.PluginApi.GetPluginApiUrl(nameof(ApiPaySuccess));
+            var apiPayUrl = $"{Main.Instance.PluginApi.PluginApiUrl}/{nameof(ApiPay)}";
+            var apiPaySuccessUrl = $"{Main.Instance.PluginApi.PluginApiUrl}/{nameof(ApiPaySuccess)}";
             var successUrl = Main.Instance.ParseApi.GetCurrentUrl(context) + "?isPaymentSuccess=" + true;
-            var apiWeixinIntervalUrl = Main.Instance.PluginApi.GetPluginApiUrl(nameof(ApiWeixinInterval));
-            var apiGetUrl = Main.Instance.PluginApi.GetPluginApiUrl(nameof(ApiGet));
+            var apiWeixinIntervalUrl = $"{Main.Instance.PluginApi.PluginApiUrl}/{nameof(ApiWeixinInterval)}";
+            var apiGetUrl = $"{Main.Instance.PluginApi.PluginApiUrl}/{nameof(ApiGet)}";
 
             var paymentApi = new PaymentApi(context.SiteId);
 
@@ -370,10 +370,9 @@ namespace SS.Payment.Parse
             }
             if (channel == "weixin")
             {
-                var notifyUrl = Main.Instance.PluginApi.GetPluginApiUrl(nameof(ApiWeixinNotify), orderNo) + "?siteId=" + siteId;
+                var notifyUrl = $"{Main.Instance.PluginApi.PluginApiUrl}/{nameof(ApiWeixinNotify)}/{orderNo}?siteId={siteId}";
                 var url = HttpUtility.UrlEncode(paymentApi.ChargeByWeixin(productName, fee, orderNo, notifyUrl));
-                var qrCodeUrl =
-                    $"{Main.Instance.PluginApi.GetPluginApiUrl(nameof(ApiQrCode))}?qrcode={url}";
+                var qrCodeUrl = $"{Main.Instance.PluginApi.PluginApiUrl}/{nameof(ApiQrCode)}?qrcode={url}";
                 return new
                 {
                     qrCodeUrl,

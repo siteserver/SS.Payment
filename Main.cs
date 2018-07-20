@@ -70,7 +70,7 @@ namespace SS.Payment
         {
             var request = args.Request;
 
-            if (Utils.EqualsIgnoreCase(args.Action, nameof(StlPayment.ApiQrCode)))
+            if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiQrCode)))
             {
                 return StlPayment.ApiQrCode(request);
             }
@@ -82,27 +82,27 @@ namespace SS.Payment
         {
             var request = args.Request;
 
-            if (Utils.EqualsIgnoreCase(args.Action, nameof(StlPayment.ApiGet)))
+            if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiGet)))
             {
                 return StlPayment.ApiGet(request);
             }
-            if (Utils.EqualsIgnoreCase(args.Action, nameof(StlPayment.ApiPay)))
+            if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiPay)))
             {
                 return StlPayment.ApiPay(request);
             }
-            if (Utils.EqualsIgnoreCase(args.Action, nameof(StlPayment.ApiPaySuccess)))
+            if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiPaySuccess)))
             {
                 return StlPayment.ApiPaySuccess(request);
             }
-            if (Utils.EqualsIgnoreCase(args.Action, nameof(StlPayment.ApiWeixinInterval)))
+            if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiWeixinInterval)))
             {
                 return StlPayment.ApiWeixinInterval(request);
             }
-            if (Utils.EqualsIgnoreCase(args.Action, nameof(StlPayment.ApiWeixinNotify)))
+            if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiWeixinNotify)))
             {
-                return StlPayment.ApiWeixinNotify(request, args.Id);
+                return StlPayment.ApiWeixinNotify(request, args.RouteId);
             }
-            if (Utils.EqualsIgnoreCase(args.Action, nameof(StlPayment.ApiRedirect)))
+            if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiRedirect)))
             {
                 var successUrl = request.GetPostString("successUrl");
                 StlPayment.ApiRedirect(successUrl);
