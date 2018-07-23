@@ -75,9 +75,9 @@ namespace SS.Payment.Provider
         };
 
         private static string _connectionString;
-        private static IDataApi _dataApi;
+        private static IDatabaseApi _dataApi;
 
-        public static void Init(string connectionString, IDataApi dataApi)
+        public static void Init(string connectionString, IDatabaseApi dataApi)
         {
             _connectionString = connectionString;
             _dataApi = dataApi;

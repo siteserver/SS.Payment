@@ -37,8 +37,8 @@ namespace SS.Payment
         {
             Instance = this;
 
-            Dao.Init(ConnectionString, DataApi);
-            RecordDao.Init(ConnectionString, DataApi);
+            Dao.Init(ConnectionString, DatabaseApi);
+            RecordDao.Init(ConnectionString, DatabaseApi);
 
             service
                 .AddSiteMenu(siteId => new Menu
