@@ -423,7 +423,7 @@ namespace SS.Payment.Parse
 
             bool isPaied;
             string responseXml;
-            paymentApi.NotifyByWeixin(request.HttpRequest, out isPaied, out responseXml);
+            paymentApi.NotifyByWeixin(HttpContext.Current.Request, out isPaied, out responseXml);
             //var filePath = Path.Combine(Main.Instance.PhysicalApplicationPath, "log.txt");
             //File.WriteAllText(filePath, responseXml);
             if (isPaied)
