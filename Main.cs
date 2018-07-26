@@ -62,11 +62,11 @@ namespace SS.Payment
                 .AddDatabaseTable(RecordDao.TableName, RecordDao.Columns)
                 .AddStlElementParser(StlPayment.ElementName, StlPayment.Parse);
 
-            service.ApiPost += Service_ApiPost;
-            service.ApiGet += Service_ApiGet;
+            service.RestApiPost += Service_RestApiPost;
+            service.RestApiGet += Service_RestApiGet;
         }
 
-        private object Service_ApiGet(object sender, ApiEventArgs args)
+        private object Service_RestApiGet(object sender, RestApiEventArgs args)
         {
             var request = args.Request;
 
@@ -78,7 +78,7 @@ namespace SS.Payment
             return new HttpResponseMessage(HttpStatusCode.NotFound);
         }
 
-        private object Service_ApiPost(object sender, ApiEventArgs args)
+        private object Service_RestApiPost(object sender, RestApiEventArgs args)
         {
             var request = args.Request;
 
