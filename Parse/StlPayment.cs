@@ -131,17 +131,20 @@ namespace SS.Payment.Parse
 </div>
 ";
 
+            var pluginUrl = Context.PluginApi.GetPluginUrl(Main.PluginId);
+            var apiUrl = Context.PluginApi.GetPluginApiUrl(Main.PluginId);
+
             var elementId = "el-" + Guid.NewGuid();
             var vueId = "v" + Guid.NewGuid().ToString().Replace("-", string.Empty);
-            var styleUrl = Context.PluginApi.GetPluginUrl(Main.PluginId, "assets/css/style.css");
-            var jqueryUrl = Context.PluginApi.GetPluginUrl(Main.PluginId, "assets/js/jquery.min.js");
-            var vueUrl = Context.PluginApi.GetPluginUrl(Main.PluginId, "assets/js/vue.min.js");
-            var deviceUrl = Context.PluginApi.GetPluginUrl(Main.PluginId, "assets/js/device.min.js");
-            var apiPayUrl = $"{Context.PluginApi.GetPluginApiUrl(Main.PluginId)}/{nameof(ApiPay)}";
-            var apiPaySuccessUrl = $"{Context.PluginApi.GetPluginApiUrl(Main.PluginId)}/{nameof(ApiPaySuccess)}";
+            var styleUrl = $"{pluginUrl}/assets/css/style.css";
+            var jqueryUrl = $"{pluginUrl}/assets/js/jquery.min.js";
+            var vueUrl = $"{pluginUrl}/assets/js/vue.min.js";
+            var deviceUrl = $"{pluginUrl}/assets/js/device.min.js";
+            var apiPayUrl = $"{apiUrl}/{nameof(ApiPay)}";
+            var apiPaySuccessUrl = $"{apiUrl}/{nameof(ApiPaySuccess)}";
             var successUrl = Context.ParseApi.GetCurrentUrl(context) + "?isPaymentSuccess=" + true;
-            var apiWeixinIntervalUrl = $"{Context.PluginApi.GetPluginApiUrl(Main.PluginId)}/{nameof(ApiWeixinInterval)}";
-            var apiGetUrl = $"{Context.PluginApi.GetPluginApiUrl(Main.PluginId)}/{nameof(ApiGet)}";
+            var apiWeixinIntervalUrl = $"{apiUrl}/{nameof(ApiWeixinInterval)}";
+            var apiGetUrl = $"{apiUrl}/{nameof(ApiGet)}";
 
             var paymentApi = new PaymentApi(context.SiteId);
 
@@ -370,9 +373,11 @@ namespace SS.Payment.Parse
             }
             if (channel == "weixin")
             {
-                var notifyUrl = $"{Context.PluginApi.GetPluginApiUrl(Main.PluginId)}/{nameof(ApiWeixinNotify)}/{orderNo}?siteId={siteId}";
+                var apiUrl = Context.PluginApi.GetPluginApiUrl(Main.PluginId);
+
+                var notifyUrl = $"{apiUrl}/{nameof(ApiWeixinNotify)}/{orderNo}?siteId={siteId}";
                 var url = HttpUtility.UrlEncode(paymentApi.ChargeByWeixin(productName, fee, orderNo, notifyUrl));
-                var qrCodeUrl = $"{Context.PluginApi.GetPluginApiUrl(Main.PluginId)}/{nameof(ApiQrCode)}?qrcode={url}";
+                var qrCodeUrl = $"{apiUrl}/{nameof(ApiQrCode)}?qrcode={url}";
                 return new
                 {
                     qrCodeUrl,

@@ -37,9 +37,6 @@ namespace SS.Payment
         {
             PluginId = Id;
 
-            Dao.Init(Context.ConnectionString, Context.DatabaseApi);
-            RecordDao.Init(Context.ConnectionString, Context.DatabaseApi);
-
             service
                 .AddSiteMenu(siteId => new Menu
                 {

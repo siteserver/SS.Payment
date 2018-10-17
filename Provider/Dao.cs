@@ -2,25 +2,16 @@
 
 namespace SS.Payment.Provider
 {
-    public class Dao
+    public static class Dao
     {
-        private static string _connectionString;
-        private static IDatabaseApi _dataApi;
-
-        public static void Init(string connectionString, IDatabaseApi dataApi)
-        {
-            _connectionString = connectionString;
-            _dataApi = dataApi;
-        }
-
         public static int GetIntResult(string sqlString)
         {
             var count = 0;
 
-            using (var conn = _dataApi.GetConnection(_connectionString))
+            using (var conn = Context.DatabaseApi.GetConnection(Context.ConnectionString))
             {
                 conn.Open();
-                using (var rdr = _dataApi.ExecuteReader(conn, sqlString))
+                using (var rdr = Context.DatabaseApi.ExecuteReader(conn, sqlString))
                 {
                     if (rdr.Read() && !rdr.IsDBNull(0))
                     {

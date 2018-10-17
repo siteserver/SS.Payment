@@ -5,7 +5,7 @@ using SS.Payment.Model;
 
 namespace SS.Payment.Provider
 {
-    public class RecordDao
+    public static class RecordDao
     {
         public const string TableName = "ss_payment_record";
 
@@ -74,15 +74,6 @@ namespace SS.Payment.Provider
             }
         };
 
-        private static string _connectionString;
-        private static IDatabaseApi _dataApi;
-
-        public static void Init(string connectionString, IDatabaseApi dataApi)
-        {
-            _connectionString = connectionString;
-            _dataApi = dataApi;
-        }
-
         public static int Insert(RecordInfo recordInfo)
         {
             string sqlString = $@"INSERT INTO {TableName}
@@ -112,19 +103,19 @@ namespace SS.Payment.Provider
 
             var parameters = new[]
             {
-                _dataApi.GetParameter(nameof(recordInfo.SiteId), recordInfo.SiteId),
-                _dataApi.GetParameter(nameof(recordInfo.Message), recordInfo.Message),
-                _dataApi.GetParameter(nameof(recordInfo.ProductId), recordInfo.ProductId),
-                _dataApi.GetParameter(nameof(recordInfo.ProductName), recordInfo.ProductName),
-                _dataApi.GetParameter(nameof(recordInfo.Fee), recordInfo.Fee),
-                _dataApi.GetParameter(nameof(recordInfo.OrderNo), recordInfo.OrderNo),
-                _dataApi.GetParameter(nameof(recordInfo.Channel), recordInfo.Channel),
-                _dataApi.GetParameter(nameof(recordInfo.IsPaied), recordInfo.IsPaied),
-                _dataApi.GetParameter(nameof(recordInfo.UserName), recordInfo.UserName),
-                _dataApi.GetParameter(nameof(recordInfo.AddDate), recordInfo.AddDate)
+                Context.DatabaseApi.GetParameter(nameof(recordInfo.SiteId), recordInfo.SiteId),
+                Context.DatabaseApi.GetParameter(nameof(recordInfo.Message), recordInfo.Message),
+                Context.DatabaseApi.GetParameter(nameof(recordInfo.ProductId), recordInfo.ProductId),
+                Context.DatabaseApi.GetParameter(nameof(recordInfo.ProductName), recordInfo.ProductName),
+                Context.DatabaseApi.GetParameter(nameof(recordInfo.Fee), recordInfo.Fee),
+                Context.DatabaseApi.GetParameter(nameof(recordInfo.OrderNo), recordInfo.OrderNo),
+                Context.DatabaseApi.GetParameter(nameof(recordInfo.Channel), recordInfo.Channel),
+                Context.DatabaseApi.GetParameter(nameof(recordInfo.IsPaied), recordInfo.IsPaied),
+                Context.DatabaseApi.GetParameter(nameof(recordInfo.UserName), recordInfo.UserName),
+                Context.DatabaseApi.GetParameter(nameof(recordInfo.AddDate), recordInfo.AddDate)
             };
 
-            return _dataApi.ExecuteNonQueryAndReturnId(TableName, nameof(RecordInfo.Id), _connectionString, sqlString, parameters);
+            return Context.DatabaseApi.ExecuteNonQueryAndReturnId(TableName, nameof(RecordInfo.Id), Context.ConnectionString, sqlString, parameters);
         }
 
         public static void UpdateIsPaied(string orderNo)
@@ -135,11 +126,11 @@ namespace SS.Payment.Provider
 
             var parameters = new List<IDataParameter>
             {
-                _dataApi.GetParameter(nameof(RecordInfo.IsPaied), true),
-                _dataApi.GetParameter(nameof(RecordInfo.OrderNo), orderNo)
+                Context.DatabaseApi.GetParameter(nameof(RecordInfo.IsPaied), true),
+                Context.DatabaseApi.GetParameter(nameof(RecordInfo.OrderNo), orderNo)
             };
 
-            _dataApi.ExecuteNonQuery(_connectionString, sqlString, parameters.ToArray());
+            Context.DatabaseApi.ExecuteNonQuery(Context.ConnectionString, sqlString, parameters.ToArray());
         }
 
         public static bool IsPaied(string orderNo)
@@ -150,10 +141,10 @@ namespace SS.Payment.Provider
 
             var parameters = new List<IDataParameter>
             {
-                _dataApi.GetParameter(nameof(RecordInfo.OrderNo), orderNo)
+                Context.DatabaseApi.GetParameter(nameof(RecordInfo.OrderNo), orderNo)
             };
 
-            using (var rdr = _dataApi.ExecuteReader(_connectionString, sqlString, parameters.ToArray()))
+            using (var rdr = Context.DatabaseApi.ExecuteReader(Context.ConnectionString, sqlString, parameters.ToArray()))
             {
                 if (rdr.Read() && !rdr.IsDBNull(0))
                 {
@@ -185,7 +176,7 @@ namespace SS.Payment.Provider
         {
             string sqlString =
                 $"DELETE FROM {TableName} WHERE Id IN ({string.Join(",", deleteIdList)})";
-            _dataApi.ExecuteNonQuery(_connectionString, sqlString);
+            Context.DatabaseApi.ExecuteNonQuery(Context.ConnectionString, sqlString);
         }
     }
 }
