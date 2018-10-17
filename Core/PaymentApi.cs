@@ -21,7 +21,7 @@ namespace SS.Payment.Core
             _siteId = siteId;
         }
 
-        private ConfigInfo ConfigInfo => Main.Instance.GetConfigInfo(_siteId);
+        private ConfigInfo ConfigInfo => Main.GetConfigInfo(_siteId);
 
         public bool IsAlipayPc => ConfigInfo.IsAlipayPc;
 

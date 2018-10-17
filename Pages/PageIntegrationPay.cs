@@ -30,7 +30,7 @@ namespace SS.Payment.Pages
         {
             _siteId = Convert.ToInt32(Request.QueryString["siteId"]);
 
-            if (!Main.Instance.Request.AdminPermissions.HasSitePermissions(_siteId, Main.Instance.Id))
+            if (!Main.Request.AdminPermissions.HasSitePermissions(_siteId, Main.PluginId))
             {
                 Response.Write("<h1>未授权访问</h1>");
                 Response.End();
@@ -71,7 +71,7 @@ namespace SS.Payment.Pages
                 LtlScript.Text = paymentApi.ChargeByJdpay("测试", 0.01M, Utils.GetShortGuid(), "https://www.jdpay.com");
             }
 
-            var configInfo = Main.Instance.GetConfigInfo(_siteId);
+            var configInfo = Main.GetConfigInfo(_siteId);
 
             LtlAlipayPc.Text = configInfo.IsAlipayPc ? $@"
                 <span class=""label label-primary"">已开通</span>

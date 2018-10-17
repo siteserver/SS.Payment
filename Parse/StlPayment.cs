@@ -46,32 +46,32 @@ namespace SS.Payment.Parse
                 var value = context.StlAttributes[name];
                 if (Utils.EqualsIgnoreCase(name, AttributeProductId))
                 {
-                    productId = Main.Instance.ParseApi.ParseAttributeValue(value, context);
+                    productId = Context.ParseApi.ParseAttributeValue(value, context);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeProductName))
                 {
-                    productName = Main.Instance.ParseApi.ParseAttributeValue(value, context);
+                    productName = Context.ParseApi.ParseAttributeValue(value, context);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeFee))
                 {
-                    value = Main.Instance.ParseApi.ParseAttributeValue(value, context);
+                    value = Context.ParseApi.ParseAttributeValue(value, context);
                     decimal.TryParse(value, out fee);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeLoginUrl))
                 {
-                    loginUrl = Main.Instance.ParseApi.ParseAttributeValue(value, context);
+                    loginUrl = Context.ParseApi.ParseAttributeValue(value, context);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeRedirectUrl))
                 {
-                    redirectUrl = Main.Instance.ParseApi.ParseAttributeValue(value, context);
+                    redirectUrl = Context.ParseApi.ParseAttributeValue(value, context);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeWeixinName))
                 {
-                    weixinName = Main.Instance.ParseApi.ParseAttributeValue(value, context);
+                    weixinName = Context.ParseApi.ParseAttributeValue(value, context);
                 }
                 else if (Utils.EqualsIgnoreCase(name, AttributeIsForceLogin))
                 {
-                    isForceLogin = Utils.ToBool(Main.Instance.ParseApi.ParseAttributeValue(value, context));
+                    isForceLogin = Utils.ToBool(Context.ParseApi.ParseAttributeValue(value, context));
                 }
                 else
                 {
@@ -82,7 +82,7 @@ namespace SS.Payment.Parse
             {
                 loginUrl = "/home/#/login";
             }
-            var currentUrl = Main.Instance.ParseApi.GetCurrentUrl(context);
+            var currentUrl = Context.ParseApi.GetCurrentUrl(context);
             var loginToPaymentUrl = $"{loginUrl}?redirectUrl={HttpUtility.UrlEncode(currentUrl)}";
 
             if (string.IsNullOrEmpty(productName) || fee <= 0) return string.Empty;
@@ -133,15 +133,15 @@ namespace SS.Payment.Parse
 
             var elementId = "el-" + Guid.NewGuid();
             var vueId = "v" + Guid.NewGuid().ToString().Replace("-", string.Empty);
-            var styleUrl = Main.Instance.PluginApi.GetPluginUrl("assets/css/style.css");
-            var jqueryUrl = Main.Instance.PluginApi.GetPluginUrl("assets/js/jquery.min.js");
-            var vueUrl = Main.Instance.PluginApi.GetPluginUrl("assets/js/vue.min.js");
-            var deviceUrl = Main.Instance.PluginApi.GetPluginUrl("assets/js/device.min.js");
-            var apiPayUrl = $"{Main.Instance.PluginApi.PluginApiUrl}/{nameof(ApiPay)}";
-            var apiPaySuccessUrl = $"{Main.Instance.PluginApi.PluginApiUrl}/{nameof(ApiPaySuccess)}";
-            var successUrl = Main.Instance.ParseApi.GetCurrentUrl(context) + "?isPaymentSuccess=" + true;
-            var apiWeixinIntervalUrl = $"{Main.Instance.PluginApi.PluginApiUrl}/{nameof(ApiWeixinInterval)}";
-            var apiGetUrl = $"{Main.Instance.PluginApi.PluginApiUrl}/{nameof(ApiGet)}";
+            var styleUrl = Context.PluginApi.GetPluginUrl(Main.PluginId, "assets/css/style.css");
+            var jqueryUrl = Context.PluginApi.GetPluginUrl(Main.PluginId, "assets/js/jquery.min.js");
+            var vueUrl = Context.PluginApi.GetPluginUrl(Main.PluginId, "assets/js/vue.min.js");
+            var deviceUrl = Context.PluginApi.GetPluginUrl(Main.PluginId, "assets/js/device.min.js");
+            var apiPayUrl = $"{Context.PluginApi.GetPluginApiUrl(Main.PluginId)}/{nameof(ApiPay)}";
+            var apiPaySuccessUrl = $"{Context.PluginApi.GetPluginApiUrl(Main.PluginId)}/{nameof(ApiPaySuccess)}";
+            var successUrl = Context.ParseApi.GetCurrentUrl(context) + "?isPaymentSuccess=" + true;
+            var apiWeixinIntervalUrl = $"{Context.PluginApi.GetPluginApiUrl(Main.PluginId)}/{nameof(ApiWeixinInterval)}";
+            var apiGetUrl = $"{Context.PluginApi.GetPluginApiUrl(Main.PluginId)}/{nameof(ApiGet)}";
 
             var paymentApi = new PaymentApi(context.SiteId);
 
@@ -312,7 +312,7 @@ namespace SS.Payment.Parse
 </script>
 ";
 
-            stlAnchor.InnerHtml = Main.Instance.ParseApi.Parse(context.StlInnerHtml, context);
+            stlAnchor.InnerHtml = Context.ParseApi.Parse(context.StlInnerHtml, context);
             stlAnchor.HRef = "javascript:;";
             stlAnchor.Attributes["onclick"] = $"{vueId}.open()";
 
@@ -370,9 +370,9 @@ namespace SS.Payment.Parse
             }
             if (channel == "weixin")
             {
-                var notifyUrl = $"{Main.Instance.PluginApi.PluginApiUrl}/{nameof(ApiWeixinNotify)}/{orderNo}?siteId={siteId}";
+                var notifyUrl = $"{Context.PluginApi.GetPluginApiUrl(Main.PluginId)}/{nameof(ApiWeixinNotify)}/{orderNo}?siteId={siteId}";
                 var url = HttpUtility.UrlEncode(paymentApi.ChargeByWeixin(productName, fee, orderNo, notifyUrl));
-                var qrCodeUrl = $"{Main.Instance.PluginApi.PluginApiUrl}/{nameof(ApiQrCode)}?qrcode={url}";
+                var qrCodeUrl = $"{Context.PluginApi.GetPluginApiUrl(Main.PluginId)}/{nameof(ApiQrCode)}?qrcode={url}";
                 return new
                 {
                     qrCodeUrl,
@@ -424,7 +424,7 @@ namespace SS.Payment.Parse
             bool isPaied;
             string responseXml;
             paymentApi.NotifyByWeixin(HttpContext.Current.Request, out isPaied, out responseXml);
-            //var filePath = Path.Combine(Main.Instance.PhysicalApplicationPath, "log.txt");
+            //var filePath = Path.Combine(Main.PhysicalApplicationPath, "log.txt");
             //File.WriteAllText(filePath, responseXml);
             if (isPaied)
             {

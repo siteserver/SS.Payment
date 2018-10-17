@@ -33,9 +33,9 @@ namespace SS.Payment.Pages
         public void Page_Load(object sender, EventArgs e)
         {
             _siteId = Convert.ToInt32(Request.QueryString["siteId"]);
-            _configInfo = Main.Instance.GetConfigInfo(_siteId);
+            _configInfo = Main.GetConfigInfo(_siteId);
 
-            if (!Main.Instance.Request.AdminPermissions.HasSitePermissions(_siteId, Main.Instance.Id))
+            if (!Main.Request.AdminPermissions.HasSitePermissions(_siteId, Main.PluginId))
             {
                 Response.Write("<h1>未授权访问</h1>");
                 Response.End();
@@ -96,7 +96,7 @@ namespace SS.Payment.Pages
             _configInfo.AlipayPcPublicKey = TbPublicKey.Text;
             _configInfo.AlipayPcPrivateKey = TbPrivateKey.Text;
 
-            Main.Instance.SetConfigInfo(_siteId, _configInfo);
+            Main.SetConfigInfo(_siteId, _configInfo);
 
             Utils.Redirect(PageIntegrationPay.GetRedirectUrl(_siteId));
         }

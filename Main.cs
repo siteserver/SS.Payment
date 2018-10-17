@@ -12,33 +12,33 @@ namespace SS.Payment
 {
     public class Main : PluginBase
     {
-        public const string PluginId = "SS.Payment";
+        public static string PluginId { get; private set; }
+
+        public static IRequest Request => Context.Request;
 
         private static readonly Dictionary<int, ConfigInfo> ConfigInfoDict = new Dictionary<int, ConfigInfo>();
 
-        internal static Main Instance { get; set; }
-
-        public ConfigInfo GetConfigInfo(int siteId)
+        public static ConfigInfo GetConfigInfo(int siteId)
         {
             if (!ConfigInfoDict.ContainsKey(siteId))
             {
-                ConfigInfoDict[siteId] = Instance.ConfigApi.GetConfig<ConfigInfo>(siteId) ?? new ConfigInfo();
+                ConfigInfoDict[siteId] = Context.ConfigApi.GetConfig<ConfigInfo>(PluginId, siteId) ?? new ConfigInfo();
             }
             return ConfigInfoDict[siteId];
         }
 
-        public void SetConfigInfo(int siteId, ConfigInfo configInfo)
+        public static void SetConfigInfo(int siteId, ConfigInfo configInfo)
         {
             ConfigInfoDict[siteId] = configInfo;
-            Instance.ConfigApi.SetConfig(siteId, configInfo);
+            Context.ConfigApi.SetConfig(PluginId, siteId, configInfo);
         }
 
         public override void Startup(IService service)
         {
-            Instance = this;
+            PluginId = Id;
 
-            Dao.Init(ConnectionString, DatabaseApi);
-            RecordDao.Init(ConnectionString, DatabaseApi);
+            Dao.Init(Context.ConnectionString, Context.DatabaseApi);
+            RecordDao.Init(Context.ConnectionString, Context.DatabaseApi);
 
             service
                 .AddSiteMenu(siteId => new Menu
