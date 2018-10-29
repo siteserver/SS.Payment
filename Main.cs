@@ -14,8 +14,6 @@ namespace SS.Payment
     {
         public static string PluginId { get; private set; }
 
-        public static IRequest Request => Context.Request;
-
         private static readonly Dictionary<int, ConfigInfo> ConfigInfoDict = new Dictionary<int, ConfigInfo>();
 
         public static ConfigInfo GetConfigInfo(int siteId)
