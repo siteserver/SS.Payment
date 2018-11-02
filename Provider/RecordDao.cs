@@ -14,7 +14,9 @@ namespace SS.Payment.Provider
             new TableColumn
             {
                 AttributeName = nameof(RecordInfo.Id),
-                DataType = DataType.Integer
+                DataType = DataType.Integer,
+                IsPrimaryKey = true,
+                IsIdentity = true
             },
             new TableColumn
             {
