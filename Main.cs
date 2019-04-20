@@ -1,12 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
+using System.Collections.Generic;
 using SiteServer.Plugin;
 using SS.Payment.Core;
-using SS.Payment.Model;
-using SS.Payment.Pages;
-using SS.Payment.Parse;
-using SS.Payment.Provider;
 
 namespace SS.Payment
 {
@@ -14,26 +8,29 @@ namespace SS.Payment
     {
         public static string PluginId { get; private set; }
 
-        private static readonly Dictionary<int, ConfigInfo> ConfigInfoDict = new Dictionary<int, ConfigInfo>();
-
         public static ConfigInfo GetConfigInfo(int siteId)
         {
-            if (!ConfigInfoDict.ContainsKey(siteId))
+            var globalConfigInfo = Context.ConfigApi.GetConfig<ConfigInfo>(PluginId, 0);
+            if (globalConfigInfo == null)
             {
-                ConfigInfoDict[siteId] = Context.ConfigApi.GetConfig<ConfigInfo>(PluginId, siteId) ?? new ConfigInfo();
+                globalConfigInfo = new ConfigInfo();
+                Context.ConfigApi.SetConfig(PluginId, 0, globalConfigInfo);
             }
-            return ConfigInfoDict[siteId];
+
+            return Context.ConfigApi.GetConfig<ConfigInfo>(PluginId, siteId) ?? globalConfigInfo;
         }
 
         public static void SetConfigInfo(int siteId, ConfigInfo configInfo)
         {
-            ConfigInfoDict[siteId] = configInfo;
             Context.ConfigApi.SetConfig(PluginId, siteId, configInfo);
+            Context.ConfigApi.SetConfig(PluginId, 0, configInfo);
         }
 
         public override void Startup(IService service)
         {
             PluginId = Id;
+
+            var repository = new RecordRepository();
 
             service
                 .AddSiteMenu(siteId => new Menu
@@ -45,65 +42,52 @@ namespace SS.Payment
                         new Menu
                         {
                             Text = "在线支付记录",
-                            Href = $"{nameof(PageRecords)}.aspx"
+                            Href = "pages/payment/records.html"
                         },
                         new Menu
                         {
-                            Text = "支付集成设置",
-                            Href = $"{nameof(PageIntegrationPay)}.aspx"
+                            Text = "在线支付设置",
+                            Href = "pages/payment/settings.html"
                         }
                     }
                 })
-                .AddDatabaseTable(RecordDao.TableName, RecordDao.Columns)
+                .AddDatabaseTable(repository.TableName, repository.TableColumns)
                 .AddStlElementParser(StlPayment.ElementName, StlPayment.Parse);
 
-            service.RestApiPost += Service_RestApiPost;
-            service.RestApiGet += Service_RestApiGet;
+            //service.RestApiPost += Service_RestApiPost;
         }
 
-        private object Service_RestApiGet(object sender, RestApiEventArgs args)
-        {
-            var request = args.Request;
+        //private object Service_RestApiPost(object sender, RestApiEventArgs args)
+        //{
+        //    var request = args.Request;
 
-            if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiQrCode)))
-            {
-                return StlPayment.ApiQrCode(request);
-            }
+        //    if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiGet)))
+        //    {
+        //        return StlPayment.ApiGet(request);
+        //    }
+        //    if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiPay)))
+        //    {
+        //        return StlPayment.ApiPay(request);
+        //    }
+        //    if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiPaySuccess)))
+        //    {
+        //        return StlPayment.ApiPaySuccess(request);
+        //    }
+        //    if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiWeixinInterval)))
+        //    {
+        //        return StlPayment.ApiWeixinInterval(request);
+        //    }
+        //    if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiWeixinNotify)))
+        //    {
+        //        return StlPayment.ApiWeixinNotify(request, args.RouteId);
+        //    }
+        //    if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiRedirect)))
+        //    {
+        //        var successUrl = request.GetPostString("successUrl");
+        //        StlPayment.ApiRedirect(successUrl);
+        //    }
 
-            return new HttpResponseMessage(HttpStatusCode.NotFound);
-        }
-
-        private object Service_RestApiPost(object sender, RestApiEventArgs args)
-        {
-            var request = args.Request;
-
-            if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiGet)))
-            {
-                return StlPayment.ApiGet(request);
-            }
-            if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiPay)))
-            {
-                return StlPayment.ApiPay(request);
-            }
-            if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiPaySuccess)))
-            {
-                return StlPayment.ApiPaySuccess(request);
-            }
-            if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiWeixinInterval)))
-            {
-                return StlPayment.ApiWeixinInterval(request);
-            }
-            if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiWeixinNotify)))
-            {
-                return StlPayment.ApiWeixinNotify(request, args.RouteId);
-            }
-            if (Utils.EqualsIgnoreCase(args.RouteResource, nameof(StlPayment.ApiRedirect)))
-            {
-                var successUrl = request.GetPostString("successUrl");
-                StlPayment.ApiRedirect(successUrl);
-            }
-
-            return new HttpResponseMessage(HttpStatusCode.NotFound);
-        }
+        //    return new HttpResponseMessage(HttpStatusCode.NotFound);
+        //}
     }
 }

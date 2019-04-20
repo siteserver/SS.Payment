@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
@@ -326,12 +326,10 @@ namespace SS.Payment.Core
         {
             switch (channel)
             {
-                case "alipay":
+                case "AliPay":
                     return "支付宝";
-                case "weixin":
+                case "WxPay":
                     return "微信支付";
-                case "jdpay":
-                    return "京东支付";
             }
             return string.Empty;
         }

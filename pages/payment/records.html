@@ -1,0 +1,223 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>SiteServer 管理后台</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      key="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      href="../assets/css/font-awesome-4.7.0.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="../assets/css/bootstrap-4.1.0.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="../assets/css/siteserver-1.0.7.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="../assets/lib/vue-multiselect/style-2.1.0.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <style>
+      .nav .nav-link {
+        font-weight: normal;
+        border-radius: 1.25rem;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="main" class="m-t-15 m-b-15 m-l-15 m-r-15">
+      <template v-if="pageLoad">
+        <div class="card-box">
+          <div class="mb-3">
+            <ul class="nav nav-pills nav-justified">
+              <li class="nav-item">
+                <a
+                  class="nav-link active"
+                  href="javascript:;"
+                  @click="{btnNavClick('records.html')}"
+                >
+                  在线支付记录
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link"
+                  href="javascript:;"
+                  @click="{btnNavClick('settings.html')}"
+                >
+                  在线支付设置
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <hr />
+
+          <div
+            v-if="pageAlert"
+            class="alert"
+            v-bind:class="{ 'alert-warning': pageAlert.type === 'warning', 'alert-success': pageAlert.type === 'success', 'alert-danger': pageAlert.type === 'danger' }"
+          >
+            <button
+              @click="pageAlert = null"
+              class="close"
+              data-dismiss="alert"
+            >
+              ×
+            </button>
+            <span v-html="pageAlert.html"></span>
+          </div>
+
+          <div class="table-responsive mt-3">
+            <table class="table tablesaw table-hover m-0">
+              <thead>
+                <tr>
+                  <th>订单编号</th>
+                  <th>产品名称</th>
+                  <th>支付方式</th>
+                  <th>支付金额</th>
+                  <th>支付时间</th>
+                  <th class="text-center">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="recordInfo in recordInfoList">
+                  <td>
+                    {{ recordInfo.orderNo }}
+                  </td>
+                  <td>
+                    {{ recordInfo.productName }}
+                  </td>
+                  <td>
+                    {{ getChannel(recordInfo) }}
+                  </td>
+                  <td>¥ {{ recordInfo.fee.toFixed(2) }}</td>
+                  <td>
+                    {{ recordInfo.addDate }}
+                  </td>
+                  <td class="text-center text-nowrap">
+                    <a
+                      v-if="!recordInfo.isSystem"
+                      class="text-danger ml-2 text-nowrap"
+                      href="javascript:;"
+                      @click="btnDeleteClick(recordInfo.id)"
+                    >
+                      删除
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <hr />
+          <div class="row">
+            <div class="col-9">
+              <ul class="pagination pagination-sm float-left">
+                <li class="page-recordInfo" :class="{disabled : page === 1}">
+                  <a
+                    class="page-link"
+                    @click="btnFirstPageClick"
+                    :class="{'bg-light' : page === 1}"
+                    href="javascript:;"
+                  >
+                    首 页
+                  </a>
+                </li>
+                <li class="page-recordInfo" :class="{disabled : page === 1}">
+                  <a
+                    class="page-link"
+                    @click="btnPrevPageClick"
+                    :class="{'bg-light' : page === 1}"
+                    href="javascript:;"
+                  >
+                    上一页
+                  </a>
+                </li>
+                <li
+                  class="page-recordInfo"
+                  :class="{disabled : page === pages}"
+                >
+                  <a
+                    class="page-link"
+                    @click="btnNextPageClick"
+                    :class="{'bg-light' : page === pages}"
+                    href="javascript:;"
+                  >
+                    下一页
+                  </a>
+                </li>
+                <li
+                  class="page-recordInfo"
+                  :class="{disabled : page === pages}"
+                >
+                  <a
+                    class="page-link"
+                    @click="btnLastPageClick"
+                    :class="{'bg-light' : page === pages}"
+                    href="javascript:;"
+                  >
+                    末 页
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="col-3">
+              <multiselect
+                @select="btnPageSelectClick"
+                v-model="page"
+                placeholder="Select one"
+                :options="pageOptions"
+                :searchable="false"
+                :show-labels="false"
+              >
+                <template slot="singleLabel" slot-scope="{ option }">
+                  第 {{ option }} 页（共 {{ pages }} 页）
+                </template>
+                <template slot="option" slot-scope="props">
+                  第 {{ props.option }} 页
+                </template>
+              </multiselect>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <div class="text-center" style="margin-top: 100px">
+          <img class="mt-3" src="../assets/images/loading.gif" />
+          <p class="lead mt-3 text-nowrap">载入中，请稍后...</p>
+        </div>
+      </template>
+    </div>
+  </body>
+</html>
+<script src="../assets/lib/es6-promise.auto.min.js"></script>
+<script src="../assets/lib/axios-0.18.0.min.js"></script>
+<script src="../assets/lib/jquery-1.9.1.min.js"></script>
+<script src="../assets/lib/layer/layer-3.1.1.js"></script>
+<script src="../assets/lib/vue-2.6.10.min.js"></script>
+
+<script src="../assets/lib/vue-multiselect/script-2.1.0.min.js"></script>
+
+<script src="../assets/lib/vee-validate/vee-validate-2.2.2.js"></script>
+<script src="../assets/lib/vee-validate/locale/zh_CN-2.2.2.js"></script>
+<script src="../assets/js/validate.js"></script>
+
+<script src="../assets/lib/sweetalert2-7.28.4.all.min.js"></script>
+<script src="../assets/js/swal2.js"></script>
+
+<script src="../assets/js/utils.js"></script>
+<script src="records.js"></script>

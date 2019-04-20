@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>SiteServer 管理后台</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      href="../assets/css/font-awesome-4.7.0.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="../assets/css/bootstrap-4.1.0.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="../assets/css/siteserver-1.0.7.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <style>
+      .nav .nav-link {
+        font-weight: normal;
+        border-radius: 1.25rem;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="main" class="m-t-15 m-b-15 m-l-15 m-r-15">
+      <template v-if="pageLoad">
+        <template v-if="wxPayQrCodeUrl">
+          <template v-if="wxPaySuccess">
+            <h3 class="text-center text-primary mt-5">
+              支付成功
+            </h3>
+          </template>
+          <template v-else>
+            <p class="text-center">
+              打开手机微信，扫一扫下面的二维码，即可完成支付
+            </p>
+            <p class="text-center">
+              <img :src="wxPayQrCodeUrl" style="width: 200px;height: 200px;" />
+            </p>
+          </template>
+        </template>
+      </template>
+      <template v-else>
+        <div class="text-center" style="margin-top: 100px">
+          <img class="mt-3" src="../assets/images/loading.gif" />
+          <p class="lead mt-3 text-nowrap">载入中，请稍后...</p>
+        </div>
+      </template>
+    </div>
+  </body>
+</html>
+<script src="../assets/lib/es6-promise.auto.min.js"></script>
+<script src="../assets/lib/axios-0.18.0.min.js"></script>
+<script src="../assets/lib/jquery-1.9.1.min.js"></script>
+<script src="../assets/lib/layer/layer-3.1.1.js"></script>
+<script src="../assets/lib/vue-2.6.10.min.js"></script>
+
+<script src="../assets/js/utils.js"></script>
+<script src="test.js"></script>
