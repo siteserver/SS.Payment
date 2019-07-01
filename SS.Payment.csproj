@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net452</TargetFrameworks>
@@ -13,7 +13,7 @@
     <Description>实现微信支付、支付宝支付以及京东支付功能</Description>
     <PackageLicense>GPL-3.0</PackageLicense>
     <PackageProjectUrl>https://github.com/siteserver/SS.Payment</PackageProjectUrl>
-    <PackageIconUrl>https://www.siteserver.cn/docs/SS.Payment/logo.svg</PackageIconUrl>
+    <PackageIconUrl>https://www.siteserver.cn/docs/ss/payment/logo.svg</PackageIconUrl>
     <Copyright>Copyright © SiteServer CMS</Copyright>
     <PackageTags>SiteServer CMS Payment Plugin</PackageTags>
     <RepositoryUrl>https://github.com/siteserver/SS.Payment</RepositoryUrl>
@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
-    <PackageReference Include="SiteServer.Plugin" Version="2.3.6" />
+    <PackageReference Include="SiteServer.Plugin" Version="2.3.11" />
     <PackageReference Include="ThoughtWorks.QRCode" Version="1.1.0" />
   </ItemGroup>
 

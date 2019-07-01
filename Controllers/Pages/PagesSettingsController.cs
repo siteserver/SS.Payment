@@ -1,6 +1,4 @@
 using System;
-using System.Text.RegularExpressions;
-using System.Web;
 using System.Web.Http;
 using SiteServer.Plugin;
 using SS.Payment.Core;
@@ -43,7 +41,7 @@ namespace SS.Payment.Controllers.Pages
 
                 var configInfo = request.GetPostObject<ConfigInfo>();
 
-                Context.ConfigApi.SetConfig(Main.PluginId, siteId, configInfo);
+                Main.SetConfigInfo(siteId, configInfo);
 
                 return Ok(new { });
             }
